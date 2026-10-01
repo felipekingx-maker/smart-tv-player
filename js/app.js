@@ -20,12 +20,19 @@
   el('bridge-form').addEventListener('submit', async function (event) {
     event.preventDefault(); el('bridge-status').textContent = 'Verificando servidor de conexão…';
     try {
-      await window.Bridge.configure(el('bridge-url').value, el('bridge-token').value);
-      el('bridge-status').textContent = 'Conexão HTTPS ativa para importação e reprodução nesta sessão.';
+      var saved = await window.Bridge.configure(el('bridge-url').value, el('bridge-token').value);
+      el('bridge-status').textContent = saved ? 'Conexão salva neste navegador. Será usada automaticamente.' : 'Conexão ativa nesta sessão. O navegador não permitiu salvar.';
+      el('bridge-token').value = '';
+      document.querySelector('.connection-settings').open = false;
+      if (saved) document.querySelector('.connection-settings').hidden = true;
     } catch (error) { el('bridge-status').textContent = error.message; }
   });
+  if (window.Bridge.restore()) {
+    el('bridge-status').textContent = 'Conexão HTTPS salva · uso automático neste navegador.';
+    document.querySelector('.connection-settings').hidden = true;
+  }
   el('disconnect-bridge').addEventListener('click', function () {
-    window.Bridge.clear(); el('bridge-token').value = ''; el('bridge-url').value = '';
+    window.Bridge.clear(); el('bridge-token').value = ''; el('bridge-url').value = 'https://smart-tv-player.felipe-kingx.workers.dev';
     if (!panel.hidden) closePlayer();
     el('bridge-status').textContent = 'Conexão HTTPS desativada.';
   });

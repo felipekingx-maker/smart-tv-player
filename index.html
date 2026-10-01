@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101522">
   <title>UniaoTv</title>
-  <link rel="stylesheet" href="./css/style.css?v=20261001-player-2">
-  <script src="./js/m3u.js?v=20261001-player-2" defer></script>
-  <script src="./js/bridge.js?v=20261001-player-2" defer></script>
-  <script src="./js/sources.js?v=20261001-player-2" defer></script>
-  <script src="./js/catalog.js?v=20261001-player-2" defer></script>
-  <script src="./js/player.js?v=20261001-player-2" defer></script>
-  <script src="./js/app.js?v=20261001-player-2" defer></script>
+  <link rel="stylesheet" href="./css/style.css?v=20261001-auto-connection-3">
+  <script src="./js/m3u.js?v=20261001-auto-connection-3" defer></script>
+  <script src="./js/bridge.js?v=20261001-auto-connection-3" defer></script>
+  <script src="./js/sources.js?v=20261001-auto-connection-3" defer></script>
+  <script src="./js/catalog.js?v=20261001-auto-connection-3" defer></script>
+  <script src="./js/player.js?v=20261001-auto-connection-3" defer></script>
+  <script src="./js/app.js?v=20261001-auto-connection-3" defer></script>
 </head>
 <body>
   <div class="app">
@@ -41,17 +41,17 @@
           <p id="playlist-status" role="status" aria-live="polite" tabindex="-1"></p>
           <div id="playlist-import">
           <details class="connection-settings">
-            <summary>Conexão HTTPS para servidores HTTP / CORS</summary>
-            <p class="note">Requer a publicação do servidor privado de conexão. Os dados abaixo ficam somente nesta sessão.</p>
+            <summary>Configurações de conexão</summary>
+            <p class="note">Configure uma vez. A conexão fica salva neste navegador e será usada automaticamente nas próximas visitas.</p>
             <form id="bridge-form" class="source-form" novalidate>
               <label for="bridge-url">Endereço HTTPS do servidor de conexão</label>
-              <input id="bridge-url" type="url" placeholder="https://uniaotv-conexao.conta.workers.dev" autocomplete="off">
+              <input id="bridge-url" type="url" value="https://smart-tv-player.felipe-kingx.workers.dev" placeholder="https://smart-tv-player.felipe-kingx.workers.dev" autocomplete="off">
               <label for="bridge-token">Chave de conexão do seu servidor</label>
               <input id="bridge-token" type="password" autocomplete="off">
-              <button type="submit" class="back">Conectar e testar</button>
-              <button id="disconnect-bridge" type="button" class="back">Desconectar</button>
+              <button type="submit" class="back">Salvar conexão</button>
+              <button id="disconnect-bridge" type="button" class="back">Esquecer conexão</button>
             </form>
-            <p id="bridge-status" role="status" aria-live="polite">Servidor de conexão ainda não configurado.</p>
+            <p id="bridge-status" role="status" aria-live="polite">Informe sua chave uma vez para ativar a conexão automática.</p>
           </details>
           <div class="source-forms">
             <form id="m3u-link-form" class="source-form" novalidate>
