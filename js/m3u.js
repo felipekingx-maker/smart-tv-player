@@ -19,6 +19,8 @@
         }
         var group = /group-title="([^"]*)"/i.exec(line.slice(0, comma));
         pending = {name: comma >= 0 ? line.slice(comma + 1).trim() : '', group: group ? group[1] : 'Sem categoria'};
+      } else if (/^#EXTGRP:/i.test(line) && pending) {
+        pending.group = line.slice(8).trim() || 'Sem categoria';
       } else if (line && line[0] !== '#') {
         if (pending && /^https?:\/\/\S+$/i.test(line)) {
           try {

@@ -6,6 +6,8 @@
   var channels = [], filtered = [], shown = 0, selected = 0, importVersion = 0;
   var list = el('channel-list'), search = el('catalog-search'), status = el('playlist-status'), more = el('more-channels');
   var fileInput = el('playlist-file'), panel = el('player-panel'), shell = document.querySelector('.app'), returnFocus;
+  var activeFolder = '';
+  var serviceFilter = el('service-filter'), groupFilter = el('group-filter');
   var player = window.UniaoPlayer.create(el('video-player'), function (text) { el('player-status').textContent = text; });
   var descriptions = {
     live: ['TV ao vivo', 'Nenhum canal nesta categoria', 'Importe sua lista pela página inicial ou ajuste sua busca.'],
@@ -15,6 +17,18 @@
   };
   function type() { return cards[selected].getAttribute('data-category'); }
   function announce(text) { status.textContent = text; if (!importPage.hidden) status.scrollIntoView({block: 'nearest'}); }
+  el('bridge-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); el('bridge-status').textContent = 'Verificando servidor de conexão…';
+    try {
+      await window.Bridge.configure(el('bridge-url').value, el('bridge-token').value);
+      el('bridge-status').textContent = 'Conexão HTTPS ativa para importação e reprodução nesta sessão.';
+    } catch (error) { el('bridge-status').textContent = error.message; }
+  });
+  el('disconnect-bridge').addEventListener('click', function () {
+    window.Bridge.clear(); el('bridge-token').value = ''; el('bridge-url').value = '';
+    if (!panel.hidden) closePlayer();
+    el('bridge-status').textContent = 'Conexão HTTPS desativada.';
+  });
   function counts() {
     var totals = {live: 0, movies: 0, series: 0};
     channels.forEach(function (item) { totals[item.type]++; });
@@ -30,8 +44,41 @@
     el('player-title').textContent = item.name; el('close-player').focus(); player.open(item, window.location.protocol);
   }
   el('close-player').addEventListener('click', closePlayer);
+  function selectOptions(select, options, title) {
+    var previous = select.value;
+    select.textContent = '';
+    var all = document.createElement('option'); all.value = ''; all.textContent = title; select.appendChild(all);
+    options.forEach(function (item) { var option = document.createElement('option'); option.value = item.name; option.textContent = item.name + ' (' + item.count + ')'; select.appendChild(option); });
+    select.value = options.some(function (item) { return item.name === previous; }) ? previous : '';
+  }
+  function refreshFacets() {
+    var folders = window.Catalog.facets(channels, type(), type() === 'live' ? 'folders' : 'genres');
+    var container = el('folder-list'); container.textContent = '';
+    el('folder-heading').textContent = type() === 'live' ? 'Pastas de canais' : 'Gêneros';
+    el('service-control').hidden = type() === 'live';
+    if (activeFolder && !folders.some(function (item) { return item.name === activeFolder; })) activeFolder = '';
+    var total = channels.filter(function (item) { return item.type === type(); }).length;
+    [{name: '', count: total}].concat(folders).forEach(function (item) {
+      var button = document.createElement('button'); button.className = 'folder-button';
+      button.textContent = (item.name || 'Todos') + ' (' + item.count + ')';
+      button.setAttribute('aria-pressed', String(item.name === activeFolder));
+      button.addEventListener('click', function () {
+        activeFolder = item.name;
+        Array.prototype.forEach.call(container.querySelectorAll('button'), function (node) { node.setAttribute('aria-pressed', String(node === button)); });
+        render(true);
+      });
+      container.appendChild(button);
+    });
+    selectOptions(serviceFilter, window.Catalog.facets(channels, type(), 'services'), 'Todos os streamings');
+    selectOptions(groupFilter, window.Catalog.facets(channels, type(), 'group'), 'Todos os grupos');
+  }
+  serviceFilter.addEventListener('change', function () { render(true); });
+  groupFilter.addEventListener('change', function () { render(true); });
+  el('reset-filters').addEventListener('click', function () {
+    activeFolder = ''; serviceFilter.value = ''; groupFilter.value = ''; search.value = ''; refreshFacets(); render(true);
+  });
   function render(reset) {
-    if (reset) { list.textContent = ''; shown = 0; filtered = window.Catalog.filter(channels, type(), search.value); }
+    if (reset) { list.textContent = ''; shown = 0; filtered = window.Catalog.filter(channels, type(), search.value, activeFolder, type() === 'live' ? '' : serviceFilter.value, groupFilter.value); }
     var limit = Math.min(shown + 100, filtered.length);
     for (var i = shown; i < limit; i++) {
       (function (item) {
@@ -45,10 +92,23 @@
         });
         select.value = item.type;
         select.addEventListener('change', function () {
-          item.type = select.value; counts(); render(true);
+          item.type = select.value; window.Catalog.decorate(item); counts(); refreshFacets(); render(true);
           var first = list.querySelector('.channel-play'); if (first) first.focus(); else el('back').focus();
         });
-        label.appendChild(select); li.appendChild(label); list.appendChild(li);
+        label.appendChild(select); li.appendChild(label);
+        var folderLabel = document.createElement('label'), folderSelect = document.createElement('select');
+        folderLabel.textContent = item.type === 'live' ? 'Pasta ' : 'Gênero ';
+        var automatic = document.createElement('option'); automatic.value = ''; automatic.textContent = 'Automático'; folderSelect.appendChild(automatic);
+        (item.type === 'live' ? window.Catalog.liveFolders : window.Catalog.genres).forEach(function (value) {
+          var option = document.createElement('option'); option.value = value; option.textContent = value; folderSelect.appendChild(option);
+        });
+        folderSelect.value = item.type === 'live' ? (item.manualFolder || '') : (item.manualGenre || '');
+        folderSelect.addEventListener('change', function () {
+          if (item.type === 'live') item.manualFolder = folderSelect.value; else item.manualGenre = folderSelect.value;
+          window.Catalog.decorate(item); refreshFacets(); render(true);
+          var first = list.querySelector('.channel-play'); if (first) first.focus(); else el('reset-filters').focus();
+        });
+        folderLabel.appendChild(folderSelect); li.appendChild(folderLabel); list.appendChild(li);
       }(filtered[i]));
     }
     shown = limit; more.hidden = shown >= filtered.length;
@@ -56,7 +116,7 @@
     el('empty-state').hidden = filtered.length > 0;
   }
   function setCatalog(items) {
-    channels = window.Catalog.prepare(items); search.value = ''; counts(); render(true);
+    channels = window.Catalog.prepare(items); search.value = ''; activeFolder = ''; serviceFilter.value = ''; groupFilter.value = ''; counts(); refreshFacets(); render(true);
     announce(el('home-summary').textContent + '. Volte ao início para escolher o que assistir.');
     el('clear-list').disabled = false;
   }
@@ -65,7 +125,7 @@
     if (!panel.hidden) closePlayer();
     channels = []; filtered = []; search.value = ''; fileInput.value = '';
     ['m3u-link', 'xtream-server', 'xtream-user', 'xtream-password'].forEach(function (id) { el(id).value = ''; });
-    counts(); render(true); announce('Lista excluída. Importe outra lista quando desejar.');
+    activeFolder = ''; serviceFilter.value = ''; groupFilter.value = ''; counts(); refreshFacets(); render(true); announce('Lista excluída. Importe outra lista quando desejar.');
     el('home-summary').textContent = 'Lista excluída. Nenhum conteúdo carregado.';
     el('clear-list').disabled = true; el('open-import').focus();
   });
@@ -106,7 +166,20 @@
   });
   el('demo-list').addEventListener('click', function () {
     importVersion++;
-    setCatalog(window.parseM3U('#EXTM3U\n#EXTINF:-1 group-title="Canais",Canal de exemplo\nhttps://example.com/live/1.m3u8\n#EXTINF:-1 group-title="Filmes",Filme de exemplo\nhttps://example.com/movie/1.mp4\n#EXTINF:-1 group-title="Séries",Série de exemplo S01E01\nhttps://example.com/series/1.mp4'));
+    var samples = [
+      ['Globo SP', 'Canais | Globos', 'live'], ['SBT RS', 'Canais | SBTs', 'live'],
+      ['TV Cultura', 'Canais | Abertos', 'live'], ['CNN Brasil', 'Canais | Notícias', 'live'],
+      ['ESPN', 'Canais | Esportes', 'live'], ['Cartoon', 'Canais | Infantis', 'live'],
+      ['Telecine', 'Canais | Filmes', 'live'], ['Canal adulto de exemplo', 'Canais | Adultos', 'live'],
+      ['Filme de ação de exemplo', 'Filmes | Netflix | Ação', 'movie'],
+      ['Comédia de exemplo', 'Filmes | Prime Video | Comédia', 'movie'],
+      ['Série de exemplo S01E01', 'Séries | HBO Max | Drama', 'series'],
+      ['Animação de exemplo S01E01', 'Séries | Disney+ | Animação', 'series']
+    ];
+    var demo = '#EXTM3U\n' + samples.map(function (sample, index) {
+      return '#EXTINF:-1 group-title="' + sample[1] + '",' + sample[0] + '\nhttps://example.com/' + sample[2] + '/' + index + (sample[2] === 'live' ? '.m3u8' : '.mp4');
+    }).join('\n');
+    setCatalog(window.parseM3U(demo));
     announce(status.textContent + ' Lista fictícia, sem transmissão.');
   });
   more.addEventListener('click', function () { render(false); if (more.hidden) el('back').focus(); });
@@ -117,9 +190,9 @@
     if (focusImport) el('open-import').focus(); else cards[selected].focus();
   }
   function openCategory(index) {
-    selected = index; search.value = ''; var content = descriptions[type()];
+    selected = index; search.value = ''; activeFolder = ''; serviceFilter.value = ''; groupFilter.value = ''; var content = descriptions[type()];
     el('category-title').textContent = content[0]; el('empty-title').textContent = content[1]; el('empty-description').textContent = content[2];
-    el('playlist-tools').hidden = type() === 'favorites'; home.hidden = true; importPage.hidden = true; category.hidden = false; render(true); el('back').focus();
+    el('playlist-tools').hidden = type() === 'favorites'; home.hidden = true; importPage.hidden = true; category.hidden = false; refreshFacets(); render(true); el('back').focus();
   }
   cards.forEach(function (card, index) {
     card.addEventListener('click', function () { openCategory(index); }); card.addEventListener('focus', function () { selected = index; });

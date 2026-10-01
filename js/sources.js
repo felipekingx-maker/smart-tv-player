@@ -8,8 +8,8 @@
     if (!/^https?:$/.test(url.protocol) || !url.hostname || url.username || url.password) {
       throw new Error('Use um endereço HTTP ou HTTPS válido, sem usuário e senha no domínio.');
     }
-    if (pageProtocol === 'https:' && url.protocol === 'http:') {
-      throw new Error('Este site usa HTTPS. Solicite ao provedor um endereço HTTPS; o navegador bloqueia servidores HTTP.');
+    if (pageProtocol === 'https:' && url.protocol === 'http:' && !(root.Bridge && root.Bridge.configured())) {
+      throw new Error('Configure a Conexão HTTPS na tela Importar lista para carregar este servidor HTTP.');
     }
     return url;
   }
@@ -29,7 +29,7 @@
     var controller = new AbortController();
     var timer = setTimeout(function () { controller.abort(); }, 120000);
     try {
-      var response = await fetcher(url.href, {signal: controller.signal, credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'});
+      var response = root.Bridge && root.Bridge.configured() ? await root.Bridge.playlist(url) : await fetcher(url.href, {signal: controller.signal, credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'});
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) throw new Error('Acesso negado. Verifique os dados e a validade da conta.');
         throw new Error('O servidor não retornou a lista (HTTP ' + response.status + ').');

@@ -3,8 +3,8 @@
   function source(value, pageProtocol) {
     var url = new URL(value);
     if (!/^https?:$/.test(url.protocol)) throw new Error('Formato de endereço não suportado.');
-    if (pageProtocol === 'https:' && url.protocol === 'http:') {
-      throw new Error('Este vídeo usa HTTP e não pode ser reproduzido neste site HTTPS. Importar o arquivo M3U não remove esse bloqueio. É necessário um stream HTTPS do provedor ou um aplicativo nativo compatível.');
+    if (pageProtocol === 'https:' && url.protocol === 'http:' && !(root.Bridge && root.Bridge.configured())) {
+      throw new Error('Configure a Conexão HTTPS na tela Importar lista para reproduzir este vídeo HTTP. O servidor privado precisa estar publicado.');
     }
     return {url: url.href, hls: /\.m3u8$/i.test(url.pathname) || url.searchParams.get('output') === 'm3u8'};
   }
@@ -52,6 +52,11 @@
       onStatus('Conectando ao vídeo…');
       try {
         var info = source(item.url, pageProtocol);
+        if (root.Bridge && root.Bridge.configured()) {
+          onStatus('Conectando pelo seu servidor HTTPS…');
+          info = await root.Bridge.playback(info);
+          if (current !== version || !active) return;
+        }
         timer = setTimeout(function () { if (current === version && active) onStatus('O vídeo não iniciou. Verifique se o servidor permite acesso pelo navegador (CORS), se a conta está ativa e se o formato é compatível.'); }, 25000);
         if (info.hls && !video.canPlayType('application/vnd.apple.mpegurl')) {
           var Hls = await loadHls();

@@ -7,6 +7,7 @@
   <title>UniaoTv</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="./js/m3u.js" defer></script>
+  <script src="./js/bridge.js" defer></script>
   <script src="./js/sources.js" defer></script>
   <script src="./js/catalog.js" defer></script>
   <script src="./js/player.js" defer></script>
@@ -39,6 +40,19 @@
         <h1 id="import-title">Importar lista</h1>
           <p id="playlist-status" role="status" aria-live="polite" tabindex="-1"></p>
           <div id="playlist-import">
+          <details class="connection-settings">
+            <summary>Conexão HTTPS para servidores HTTP / CORS</summary>
+            <p class="note">Requer a publicação do servidor privado de conexão. Os dados abaixo ficam somente nesta sessão.</p>
+            <form id="bridge-form" class="source-form" novalidate>
+              <label for="bridge-url">Endereço HTTPS do servidor de conexão</label>
+              <input id="bridge-url" type="url" placeholder="https://uniaotv-conexao.conta.workers.dev" autocomplete="off">
+              <label for="bridge-token">Chave de conexão do seu servidor</label>
+              <input id="bridge-token" type="password" autocomplete="off">
+              <button type="submit" class="back">Conectar e testar</button>
+              <button id="disconnect-bridge" type="button" class="back">Desconectar</button>
+            </form>
+            <p id="bridge-status" role="status" aria-live="polite">Servidor de conexão ainda não configurado.</p>
+          </details>
           <div class="source-forms">
             <form id="m3u-link-form" class="source-form" novalidate>
               <h2>Link M3U</h2>
@@ -58,7 +72,7 @@
             </form>
           </div>
           <div class="playlist-actions"><label for="playlist-file">Importar arquivo M3U (até 100 MB)</label><input id="playlist-file" type="file" accept=".m3u,.m3u8,text/plain"><button id="demo-list" class="back">Testar com lista de exemplo</button></div>
-          <p class="note">A lista fica apenas nesta sessão. Os dados são enviados diretamente ao servidor informado. No site HTTPS, o servidor e os vídeos precisam oferecer HTTPS. A categoria é estimada pelos grupos, nomes e links; use “Categoria” no item para corrigir.</p>
+          <p class="note">A lista fica apenas nesta sessão. Com a Conexão HTTPS ativa, a lista e os vídeos passam pelo seu servidor privado. Sem ela, fontes HTTP e fontes que bloqueiam CORS podem não funcionar. As pastas são estimadas pelos grupos e nomes; você pode corrigir a categoria e a pasta de cada item.</p>
           </div>
       </section>
       <section id="category" hidden aria-labelledby="category-title">
@@ -68,9 +82,19 @@
         <div id="playlist-tools" hidden>
           <label for="catalog-search">Buscar por nome ou grupo</label>
           <input id="catalog-search" class="catalog-search" type="search" placeholder="Buscar nesta categoria…">
+          <div class="catalog-layout">
+            <aside class="folder-sidebar" aria-label="Pastas da categoria"><h2 id="folder-heading">Pastas</h2><div id="folder-list"></div></aside>
+            <div class="catalog-content">
+              <div class="facet-controls">
+                <label id="service-control">Streaming<select id="service-filter"><option value="">Todos os streamings</option></select></label>
+                <label>Grupo original da lista<select id="group-filter"><option value="">Todos os grupos</option></select></label>
+                <button id="reset-filters" class="back">Limpar filtros</button>
+              </div>
           <p id="catalog-count" role="status"></p>
           <ul id="channel-list" class="channel-list" aria-label="Conteúdo da categoria"></ul>
           <button id="more-channels" class="back" hidden>Mostrar mais itens</button>
+            </div>
+          </div>
         </div>
         <div id="empty-state" class="empty-state"><span aria-hidden="true">◇</span><h2 id="empty-title"></h2><p id="empty-description"></p></div>
       </section>

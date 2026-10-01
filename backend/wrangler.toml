@@ -1,0 +1,14 @@
+name = "uniaotv-conexao"
+main = "worker.mjs"
+compatibility_date = "2026-09-30"
+workers_dev = true
+
+[vars]
+APP_ORIGIN = "https://felipekingx-maker.github.io"
+# Apenas nomes de domínio, separados por vírgula; sem protocolo ou credenciais.
+# Inclua também os domínios de CDN/redirecionamento usados pelo provedor.
+ALLOWED_HOSTS = "seu-provedor.example"
+ALLOWED_PORTS = "80,443,8080,8443"
+
+[observability]
+enabled = false
