@@ -1,0 +1,63 @@
+name: Build UniaoTV Mobile APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/build-mobile-apk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout customizations
+        uses: actions/checkout@v4
+
+      - name: Clone OpenTV source
+        run: |
+          git clone --depth 1 https://github.com/opentvproject/opentv.git upstream
+          chmod +x mobile/patch.sh
+          mobile/patch.sh upstream
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        working-directory: upstream
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Prepare files
+        run: |
+          cp upstream/app/build/outputs/apk/debug/app-debug.apk UniaoTV-mobile-v1.0.0.apk
+          sha256sum UniaoTV-mobile-v1.0.0.apk > UniaoTV-mobile-v1.0.0.apk.sha256
+          (cd upstream && zip -qr ../UniaoTV-mobile-v1.0.0-source.zip . -x '.git/*' '.gradle/*' 'app/build/*')
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UniaoTV-mobile-v1.0.0
+          path: |
+            UniaoTV-mobile-v1.0.0.apk
+            UniaoTV-mobile-v1.0.0.apk.sha256
+            UniaoTV-mobile-v1.0.0-source.zip
+
+      - name: Publish test release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete uniaotv-mobile-v1.0.0 --yes || true
+          git push origin :refs/tags/uniaotv-mobile-v1.0.0 || true
+          gh release create uniaotv-mobile-v1.0.0             UniaoTV-mobile-v1.0.0.apk             UniaoTV-mobile-v1.0.0.apk.sha256             UniaoTV-mobile-v1.0.0-source.zip             --title 'UniaoTV Mobile v1.0.0 - teste'             --notes 'Primeira versao mobile de teste. Base GPL: OpenTV. Home com TV, Filmes, Series e Configuracoes. O app nao inclui canais nem listas.'
