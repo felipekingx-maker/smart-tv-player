@@ -1,0 +1,45 @@
+*{box-sizing:border-box}
+:root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#101522;color:#f5f7ff}
+body{margin:0;background:radial-gradient(ellipse at 85% 0%,#23324f 0%,transparent 48%),#101522;min-height:100vh}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.app{max-width:1600px;min-height:100vh;margin:0 auto;padding:42px 5vw 28px;display:flex;flex-direction:column}
+.header{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-size:20px;letter-spacing:1px}
+.brand strong{color:#79e4d0}
+.brand-icon{background:#79e4d0;color:#101522;border-radius:10px;padding:10px 13px;margin-right:4px}
+.badge{font-size:11px;letter-spacing:2px;color:#a6b2cb;border:1px solid #3b4963;border-radius:30px;padding:9px 14px}
+main{flex:1;padding:65px 0 50px}
+.eyebrow{font-size:12px;letter-spacing:3px;color:#79e4d0;margin:0 0 18px}
+h1{font-size:clamp(32px,4vw,62px);letter-spacing:-1.5px;margin:0 0 16px}
+.intro{color:#aeb9cf;font-size:19px;margin:0 0 38px}
+.menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:280px;padding:30px 25px;border:1px solid #35425b;border-radius:20px;background:linear-gradient(145deg,#25334b,#192338);transition:transform .15s,border-color .15s,box-shadow .15s}
+.card.movies{background:linear-gradient(145deg,#363050,#201f36)}
+.card.series{background:linear-gradient(145deg,#233e45,#182b35)}
+.card.favorites{background:linear-gradient(145deg,#443642,#2b2434)}
+.card-icon{font-size:42px;color:#79e4d0;margin-bottom:30px}
+.movies .card-icon{color:#c4a6ff}.series .card-icon{color:#82d3eb}.favorites .card-icon{color:#f1bf8d}
+.card-title{font-size:27px;font-weight:bold;margin-bottom:12px}
+.card-description{font-size:15px;color:#b5bfd2;line-height:1.5}
+.card-action{margin-top:auto;padding-top:28px;font-size:11px;letter-spacing:2px;color:#c3cede}
+.card:hover{border-color:#79e4d0}
+.card:focus{outline:3px solid #79e4d0;outline-offset:5px;transform:translateY(-5px);box-shadow:0 16px 40px #0005}
+a:focus,.back:focus{outline:3px solid #79e4d0;outline-offset:5px}
+footer{border-top:1px solid #2a354b;padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.device{display:flex;align-items:center;gap:12px;color:#b5bfd2;font-size:14px}
+.device strong{color:#fff;letter-spacing:2px}
+.device small{display:block;font-size:11px;color:#8795ae;margin-top:7px}
+.status-dot{height:8px;width:8px;flex-shrink:0;border-radius:50%;background:#79e4d0}
+.controls{font-size:12px;color:#8795ae;line-height:1.8}.controls span{padding:0 9px}
+.back{background:#243149;border:1px solid #43516a;border-radius:10px;padding:12px 20px;margin-bottom:35px}
+.empty-state{border:1px dashed #43516a;border-radius:20px;padding:36px;max-width:800px;margin-top:28px;background:#192338}
+.empty-state>span{font-size:40px;color:#79e4d0}
+h2{font-size:24px;margin:16px 0}
+.empty-state p{color:#b5bfd2;line-height:1.7}
+.empty-state .note{font-size:13px;color:#8998b2;border-top:1px solid #35425b;padding-top:20px;margin-top:24px}
+@media(min-width:1600px){.card{min-height:330px}}
+@media(max-width:1000px){.menu{grid-template-columns:repeat(2,minmax(0,1fr))}.card{min-height:235px}footer{align-items:flex-start;flex-direction:column}}
+@media(max-width:540px){.app{padding:24px 22px}.header{align-items:flex-start;flex-direction:column}.brand{font-size:16px}.badge{font-size:9px}main{padding-top:40px}.menu{gap:16px}.card{padding:22px 16px;min-height:230px}.card-title{font-size:22px}.card-description{font-size:13px}.card-icon{margin-bottom:20px}.intro{font-size:16px}.empty-state{padding:24px}.controls{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}

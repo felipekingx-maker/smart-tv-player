@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101522">
+  <title>UniaoTv</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="./js/app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <a class="brand" href="./index.html" aria-label="UniaoTv, início"><span class="brand-icon" aria-hidden="true">▶</span> <strong>UniaoTv</strong></a>
+      <span class="badge">PROTÓTIPO WEB</span>
+    </header>
+    <main>
+      <section id="home" aria-labelledby="home-title">
+        <p class="eyebrow">SEU ENTRETENIMENTO, DO SEU JEITO</p>
+        <h1 id="home-title">O que vamos assistir?</h1>
+        <p class="intro">Escolha uma categoria para começar.</p>
+        <div class="menu" aria-label="Categorias">
+          <button class="card live" data-category="live"><span class="card-icon" aria-hidden="true">▣</span><span class="card-title">TV ao vivo</span><span class="card-description">Seus canais em um só lugar</span><span class="card-action" aria-hidden="true">ABRIR →</span></button>
+          <button class="card movies" data-category="movies"><span class="card-icon" aria-hidden="true">▶</span><span class="card-title">Filmes</span><span class="card-description">Uma sessão no seu tempo</span><span class="card-action" aria-hidden="true">ABRIR →</span></button>
+          <button class="card series" data-category="series"><span class="card-icon" aria-hidden="true">▤</span><span class="card-title">Séries</span><span class="card-description">Sua próxima maratona</span><span class="card-action" aria-hidden="true">ABRIR →</span></button>
+          <button class="card favorites" data-category="favorites"><span class="card-icon" aria-hidden="true">☆</span><span class="card-title">Favoritos</span><span class="card-description">Tudo que você mais gosta</span><span class="card-action" aria-hidden="true">ABRIR →</span></button>
+        </div>
+      </section>
+      <section id="category" hidden aria-labelledby="category-title">
+        <button id="back" class="back">← Voltar</button>
+        <p class="eyebrow">SUA BIBLIOTECA</p>
+        <h1 id="category-title" tabindex="-1"></h1>
+        <div class="empty-state"><span aria-hidden="true">◇</span><h2 id="empty-title"></h2><p id="empty-description"></p><p class="note">Esta primeira versão testa a interface e a navegação. O cadastro de playlists e a reprodução serão adicionados nas próximas etapas.</p></div>
+      </section>
+    </main>
+    <footer>
+      <div class="device"><span class="status-dot" aria-hidden="true"></span><span>Dispositivo local: <strong id="device-id">—</strong><small id="device-note">Identificador deste navegador · ativação ainda indisponível</small></span></div>
+      <p class="controls">← ↑ ↓ → navegar <span>·</span> Enter selecionar <span>·</span> Esc voltar</p>
+    </footer>
+  </div>
+</body>
+</html>
