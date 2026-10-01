@@ -13,6 +13,36 @@
   var fileInput = document.getElementById('playlist-file');
   var more = document.getElementById('more-channels');
 
+  async function importRemote(makeURL, sourceName) {
+    var version = ++importVersion;
+    status.textContent = 'Carregando ' + sourceName + '…';
+    try {
+      var url = makeURL();
+      var text = await window.PlaylistSources.download(url, window.fetch.bind(window));
+      if (version !== importVersion) return;
+      var parsed;
+      try { parsed = window.parseM3U(text); }
+      catch (error) { throw new Error('O servidor não retornou uma lista M3U válida. Verifique o link ou os dados da conta.'); }
+      channels = parsed;
+      renderChannels(true);
+      status.textContent += ' · Origem: ' + sourceName;
+    } catch (error) {
+      if (version === importVersion) status.textContent = error.message + ' Sua lista anterior foi mantida.';
+    }
+  }
+  document.getElementById('m3u-link-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    importRemote(function () {
+      return window.PlaylistSources.validateURL(document.getElementById('m3u-link').value, window.location.protocol);
+    }, 'link M3U');
+  });
+  document.getElementById('xtream-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    importRemote(function () {
+      return window.PlaylistSources.xtreamURL(document.getElementById('xtream-server').value, document.getElementById('xtream-user').value, document.getElementById('xtream-password').value, window.location.protocol);
+    }, 'Xtream');
+  });
+
   function renderChannels(reset) {
     if (reset) { list.textContent = ''; shownChannels = 0; }
     var limit = Math.min(shownChannels + 100, channels.length);
@@ -29,7 +59,7 @@
     shownChannels = limit;
     status.textContent = channels.length + ' canais importados · ' + shownChannels + ' exibidos';
     more.hidden = shownChannels >= channels.length;
-    document.getElementById('empty-state').hidden = channels.length > 0;
+    document.getElementById('empty-state').hidden = selected === 0 && channels.length > 0;
   }
 
   fileInput.addEventListener('change', function () {
