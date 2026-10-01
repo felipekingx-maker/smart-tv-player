@@ -7,7 +7,7 @@ workers_dev = true
 APP_ORIGIN = "https://felipekingx-maker.github.io"
 # Apenas nomes de domínio, separados por vírgula; sem protocolo ou credenciais.
 # Inclua também os domínios de CDN/redirecionamento usados pelo provedor.
-ALLOWED_HOSTS = "nanoignite.click"
+ALLOWED_HOSTS = "nanoignite.click,forsmartthings.com"
 ALLOWED_PORTS = "80,443,8080,8443"
 
 [observability]
