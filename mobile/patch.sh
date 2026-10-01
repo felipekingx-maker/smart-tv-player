@@ -3,72 +3,108 @@ set -euo pipefail
 ROOT="${1:-.}"
 cd "$ROOT"
 
-# Brand + mobile package identity. Namespace stays app.opentv so upstream source paths remain stable.
 python3 - <<'PY'
 from pathlib import Path
+
+# Keep the upstream namespace so the GPL code needs minimal changes, but make this a distinct app.
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
 s = s.replace('versionName = "0.11.8"', 'versionName = "1.0.0-mobile"')
 p.write_text(s)
 
-# All visible strings: rebrand OpenTV -> UniaoTV while preserving the GPL notices in source headers.
+# Rebrand visible strings while preserving source-code licence headers.
 for p in Path('app/src/main/res').glob('values*/strings.xml'):
     s = p.read_text()
     s = s.replace('OpenTV', 'UniaoTV').replace('opentv', 'uniaotv')
     p.write_text(s)
 
-# Portuguese strings should use Brazilian labels on the main navigation.
 pt = Path('app/src/main/res/values-pt/strings.xml')
 if pt.exists():
-    s = pt.read_text()
-    s = s.replace('Definições', 'Configurações')
+    s = pt.read_text().replace('Definições', 'Configurações')
     pt.write_text(s)
 
-# Accent palette: dark navy + electric cyan/blue matching the UniaoTV logo.
-Path('app/src/main/res/values/colors.xml').write_text('''<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="window_background">#FF020817</color>\n    <color name="accent">#FF00C8FF</color>\n</resources>\n''')
+# UniaoTV dark navy / cyan palette.
+Path('app/src/main/res/values/colors.xml').write_text("""<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_background">#FF020817</color>
+    <color name="accent">#FF00C8FF</color>
+</resources>
+""")
 
-# First launch opens the 4-item mobile home. Playlist setup stays inside Configurações.
+# First launch opens the mobile hub. Provider/list setup remains inside Configuracoes.
 main = Path('app/src/main/java/app/opentv/MainActivity.kt')
 s = main.read_text()
 s = s.replace('import app.opentv.update.UpdateGate\n', '')
-s = s.replace('val start = if (sourcesUi.sources.isEmpty()) Routes.ADD_SOURCE else Routes.HOME', 'val start = Routes.HOME')
+s = s.replace(
+    'val start = if (sourcesUi.sources.isEmpty()) Routes.ADD_SOURCE else Routes.HOME',
+    'val start = Routes.HOME'
+)
 s = s.replace('        UpdateGate()\n', '')
 s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.0 (Android)')
 main.write_text(s)
 
-# Disable Android TV launcher entry in this build; a TV Box edition will be made separately.
+# Mobile build only. TV Box receives a separate UI/build later.
 man = Path('app/src/main/AndroidManifest.xml')
 s = man.read_text()
-s = s.replace('''            <!-- Android TV / Fire TV home screen -->\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />\n            </intent-filter>\n''', '')
+s = s.replace("""            <!-- Android TV / Fire TV home screen -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+""", '')
 s = s.replace('android:banner="@drawable/banner"', 'android:banner="@drawable/uniaotv_logo"')
 s = s.replace('android:icon="@mipmap/ic_launcher"', 'android:icon="@drawable/uniaotv_logo"')
+s = s.replace('android:roundIcon="@mipmap/ic_launcher_round"', 'android:roundIcon="@drawable/uniaotv_logo"')
 man.write_text(s)
 
-# Source/About links identify the modified project instead of the upstream release channel.
+# About/source-code links point to the modified project.
 for p in Path('app/src/main/java').rglob('*.kt'):
-    s = p.read_text()
-    s = s.replace('https://github.com/opentvproject/opentv', 'https://github.com/felipekingx-maker/smart-tv-player')
+    s = p.read_text().replace(
+        'https://github.com/opentvproject/opentv',
+        'https://github.com/felipekingx-maker/smart-tv-player'
+    )
     p.write_text(s)
 PY
 
 cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt
-cp "$OLDPWD/mobile/uniaotv_logo.png" app/src/main/res/drawable/uniaotv_logo.png
 
-# Keep the upstream GPL license in the corresponding source bundle and add modification notice.
+cat > app/src/main/res/drawable/uniaotv_logo.xml <<'XML'
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#020817"
+        android:pathData="M20,20h68a14,14 0,0 1,14 14v48a14,14 0,0 1,-14 14h-68a14,14 0,0 1,-14 -14v-48a14,14 0,0 1,14 -14z"/>
+    <path android:strokeColor="#00C8FF" android:strokeWidth="6"
+        android:strokeLineCap="round" android:fillColor="@android:color/transparent"
+        android:pathData="M36,18 L49,31 M72,18 L59,31"/>
+    <path android:strokeColor="#00C8FF" android:strokeWidth="8"
+        android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M30,40 L30,65 C30,79 40,85 54,85 C68,85 78,79 78,65 L78,40"/>
+    <path android:fillColor="#00C8FF"
+        android:pathData="M49,48 L49,73 L69,60.5 Z"/>
+    <path android:strokeColor="#087CFF" android:strokeWidth="4"
+        android:strokeLineCap="round" android:fillColor="@android:color/transparent"
+        android:pathData="M91,43 C99,49 99,63 91,69 M97,35 C111,47 111,65 97,77"/>
+</vector>
+XML
+
 cat > UNIAOTV_MODIFICATIONS.md <<'TXT'
 # UniaoTV Mobile
 
-This build is a modified version of OpenTV (GPL-3.0-or-later).
+This build is a modified version of OpenTV, licensed GPL-3.0-or-later.
 
-Changes in this build:
-- UniaoTV branding, app id and logo.
+Changes:
+- UniaoTV branding and distinct Android application id.
 - Mobile-only launcher configuration.
-- Four-item touch-first home: TV, Filmes, Series, Configuracoes.
-- Dark navy / cyan visual theme.
-- First launch starts at the home hub; playlist/provider setup is available from Configuracoes.
-- Upstream self-update prompt disabled so this build does not offer OpenTV binaries as UniaoTV updates.
+- Touch-first home with TV, Filmes, Series and Configuracoes.
+- Dark navy/cyan visual identity.
+- Home opens before playlist configuration.
+- Upstream self-update prompt disabled for this branded build.
 
-Upstream project: https://github.com/opentvproject/opentv
+Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
 TXT
