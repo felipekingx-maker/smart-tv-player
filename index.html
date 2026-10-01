@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101522">
   <title>UniaoTv</title>
-  <link rel="stylesheet" href="./css/style.css?v=20261001-folders-https-1">
-  <script src="./js/m3u.js?v=20261001-folders-https-1" defer></script>
-  <script src="./js/bridge.js?v=20261001-folders-https-1" defer></script>
-  <script src="./js/sources.js?v=20261001-folders-https-1" defer></script>
-  <script src="./js/catalog.js?v=20261001-folders-https-1" defer></script>
-  <script src="./js/player.js?v=20261001-folders-https-1" defer></script>
-  <script src="./js/app.js?v=20261001-folders-https-1" defer></script>
+  <link rel="stylesheet" href="./css/style.css?v=20261001-player-2">
+  <script src="./js/m3u.js?v=20261001-player-2" defer></script>
+  <script src="./js/bridge.js?v=20261001-player-2" defer></script>
+  <script src="./js/sources.js?v=20261001-player-2" defer></script>
+  <script src="./js/catalog.js?v=20261001-player-2" defer></script>
+  <script src="./js/player.js?v=20261001-player-2" defer></script>
+  <script src="./js/app.js?v=20261001-player-2" defer></script>
 </head>
 <body>
   <div class="app">
@@ -105,7 +105,7 @@
     </footer>
   </div>
   <section id="player-panel" class="player-panel" hidden aria-labelledby="player-title" role="dialog" aria-modal="true">
-    <div class="player-header"><h2 id="player-title"></h2><button id="close-player" class="back">← Voltar à lista</button></div>
+    <div class="player-header"><h2 id="player-title"></h2><div class="player-actions"><button id="fullscreen-player" class="back" type="button">⛶ Tela cheia</button><button id="close-player" class="back">← Voltar à lista</button></div></div>
     <p id="player-status" role="status" aria-live="polite"></p>
     <video id="video-player" controls playsinline preload="metadata" referrerpolicy="no-referrer"></video>
   </section>

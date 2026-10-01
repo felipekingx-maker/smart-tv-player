@@ -36,6 +36,7 @@
     el('home-summary').textContent = channels.length + ' itens importados · ' + totals.live + ' canais · ' + totals.movies + ' filmes · ' + totals.series + ' episódios';
   }
   function closePlayer() {
+    if (document.fullscreenElement === panel && document.exitFullscreen) document.exitFullscreen().catch(function () {});
     player.stop(); panel.hidden = true; shell.inert = false; document.body.style.overflow = '';
     if (returnFocus && returnFocus.isConnected) returnFocus.focus(); else el('back').focus();
   }
@@ -44,6 +45,17 @@
     el('player-title').textContent = item.name; el('close-player').focus(); player.open(item, window.location.protocol);
   }
   el('close-player').addEventListener('click', closePlayer);
+  el('fullscreen-player').addEventListener('click', async function () {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (panel.requestFullscreen) await panel.requestFullscreen();
+      else if (el('video-player').webkitEnterFullscreen) el('video-player').webkitEnterFullscreen();
+      else throw new Error('Tela cheia indisponível neste navegador.');
+    } catch (error) { el('player-status').textContent = 'Não foi possível abrir tela cheia. Tente a tecla F11 no computador.'; }
+  });
+  document.addEventListener('fullscreenchange', function () {
+    el('fullscreen-player').textContent = document.fullscreenElement === panel ? '⛶ Sair da tela cheia' : '⛶ Tela cheia';
+  });
   function selectOptions(select, options, title) {
     var previous = select.value;
     select.textContent = '';
