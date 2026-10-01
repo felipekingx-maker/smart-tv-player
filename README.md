@@ -7,13 +7,16 @@ Protótipo web de um reprodutor para Smart TVs, começando pela interface e nave
 - Navegação com setas, Enter e Esc/Backspace para voltar.
 - Layout adaptável para TV, computador e celular.
 - Identificador local persistido no navegador quando o armazenamento está disponível.
-- Importação local de arquivo M3U/M3U8 de até 100 MB em TV ao vivo.
+- Importação local de arquivo M3U/M3U8 de até 100 MB pela tela Importar lista.
 - Importação por link M3U, com limite de 100 MB e tempo limite de 120 segundos.
 - Importação Xtream por servidor, usuário e senha usando a exportação M3U get.php do provedor.
-- Nomes e grupos dos canais, apresentados em lotes de 100.
+- Classificação por grupos, links e nomes em TV ao vivo, Filmes e Séries; episódios individuais.
+- Busca por nome/grupo, correção manual de categoria e exibição em lotes de 100.
+- Botões Importar lista e Excluir lista na página inicial.
+- Player HTML5 para formatos suportados, com HLS.js 1.7.3 carregado sob demanda para HLS.
 - Lista fictícia para testar a interface sem um arquivo próprio.
 
-As listas importadas ficam apenas em memória até recarregar a página. O arquivo é processado no navegador, sem envio ao servidor. Nesta etapa, todas as entradas são exibidas em TV ao vivo; a separação entre filmes e séries virá depois. Não inclui reprodução, autenticação ou ativação remota. O identificador local não é uma licença, um MAC ou uma credencial de autenticação.
+As listas importadas ficam apenas em memória até recarregar a página. O arquivo é processado no navegador, sem envio ao servidor. A classificação do M3U é uma estimativa, pois nem toda lista define o tipo do conteúdo. Categorias sem pistas suficientes ficam em TV ao vivo, e podem ser corrigidas no seletor de cada item. Não inclui autenticação própria ou ativação remota. O identificador local não é uma licença, um MAC ou uma credencial de autenticação.
 
 Links e credenciais são enviados diretamente ao servidor indicado pelo usuário, sem proxy e sem armazenamento local pelo app. O provedor recebe usuário/senha nos parâmetros da exportação Xtream. O GitHub Pages usa HTTPS: o servidor deve oferecer HTTPS e permitir CORS. Servidores sem exportação get.php não são compatíveis com esta integração inicial. Não há integração de catálogo, EPG ou episódios pela API Xtream nesta versão.
 
@@ -28,9 +31,12 @@ https://felipekingx-maker.github.io/smart-tv-player/
 Os caminhos dos arquivos são relativos para funcionar no subdiretório do GitHub Pages.
 
 ## Próximas etapas
-1. Classificação do conteúdo e integração dos catálogos Xtream.
-2. Reprodução e validação dos formatos suportados.
+1. Integração dos catálogos Xtream e organização de temporadas.
+2. Backend HTTPS privado para provedores HTTP/CORS e formatos adicionais.
 3. Backend e pareamento seguro de dispositivos.
 4. Adaptação e testes em Samsung Tizen e LG webOS.
 
 O protótipo web ainda não é um pacote instalável de TV. Reprodução e navegação precisarão de testes nos aparelhos de destino.
+
+## Limitações de reprodução
+O player reproduz diretamente a origem: streams HTTP são bloqueados no site HTTPS, inclusive depois de importar o arquivo. HLS exige CORS quando usa HLS.js; codecs, DRM e formatos como MPEG-TS direto podem não funcionar no navegador. Não há proxy publicado nesta versão. Importar uma lista não garante que cada vídeo seja reproduzível.

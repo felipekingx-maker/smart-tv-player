@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="./css/style.css">
   <script src="./js/m3u.js" defer></script>
   <script src="./js/sources.js" defer></script>
+  <script src="./js/catalog.js" defer></script>
+  <script src="./js/player.js" defer></script>
   <script src="./js/app.js" defer></script>
 </head>
 <body>
@@ -27,13 +29,16 @@
           <button class="card series" data-category="series"><span class="card-icon" aria-hidden="true">▤</span><span class="card-title">Séries</span><span class="card-description">Sua próxima maratona</span><span class="card-action" aria-hidden="true">ABRIR →</span></button>
           <button class="card favorites" data-category="favorites"><span class="card-icon" aria-hidden="true">☆</span><span class="card-title">Favoritos</span><span class="card-description">Tudo que você mais gosta</span><span class="card-action" aria-hidden="true">ABRIR →</span></button>
         </div>
+        <button id="open-import" class="back import-home">＋ Importar lista</button>
+        <button id="clear-list" class="back" disabled>Excluir lista</button>
+        <p id="home-summary" class="note">Importe sua lista para carregar canais, filmes e séries.</p>
       </section>
-      <section id="category" hidden aria-labelledby="category-title">
-        <button id="back" class="back">← Voltar</button>
+      <section id="import-page" hidden aria-labelledby="import-title">
+        <button id="back-import" class="back">← Voltar ao início</button>
         <p class="eyebrow">SUA BIBLIOTECA</p>
-        <h1 id="category-title" tabindex="-1"></h1>
-        <div id="playlist-tools" hidden>
+        <h1 id="import-title">Importar lista</h1>
           <p id="playlist-status" role="status" aria-live="polite" tabindex="-1"></p>
+          <div id="playlist-import">
           <div class="source-forms">
             <form id="m3u-link-form" class="source-form" novalidate>
               <h2>Link M3U</h2>
@@ -53,11 +58,21 @@
             </form>
           </div>
           <div class="playlist-actions"><label for="playlist-file">Importar arquivo M3U (até 100 MB)</label><input id="playlist-file" type="file" accept=".m3u,.m3u8,text/plain"><button id="demo-list" class="back">Testar com lista de exemplo</button></div>
-          <p class="note">A lista fica apenas nesta sessão. Os dados são enviados diretamente ao servidor informado e não são salvos pelo UniaoTv. No site HTTPS, o servidor precisa oferecer HTTPS e permitir acesso pelo navegador (CORS). A reprodução será adicionada na próxima etapa.</p>
-          <ul id="channel-list" class="channel-list" aria-label="Canais importados"></ul>
-          <button id="more-channels" class="back" hidden>Mostrar mais canais</button>
+          <p class="note">A lista fica apenas nesta sessão. Os dados são enviados diretamente ao servidor informado. No site HTTPS, o servidor e os vídeos precisam oferecer HTTPS. A categoria é estimada pelos grupos, nomes e links; use “Categoria” no item para corrigir.</p>
+          </div>
+      </section>
+      <section id="category" hidden aria-labelledby="category-title">
+        <button id="back" class="back">← Voltar</button>
+        <p class="eyebrow">SUA BIBLIOTECA</p>
+        <h1 id="category-title" tabindex="-1"></h1>
+        <div id="playlist-tools" hidden>
+          <label for="catalog-search">Buscar por nome ou grupo</label>
+          <input id="catalog-search" class="catalog-search" type="search" placeholder="Buscar nesta categoria…">
+          <p id="catalog-count" role="status"></p>
+          <ul id="channel-list" class="channel-list" aria-label="Conteúdo da categoria"></ul>
+          <button id="more-channels" class="back" hidden>Mostrar mais itens</button>
         </div>
-        <div id="empty-state" class="empty-state"><span aria-hidden="true">◇</span><h2 id="empty-title"></h2><p id="empty-description"></p><p class="note">Esta versão testa a interface e a importação de listas. Reprodução e ativação ainda estão em desenvolvimento.</p></div>
+        <div id="empty-state" class="empty-state"><span aria-hidden="true">◇</span><h2 id="empty-title"></h2><p id="empty-description"></p></div>
       </section>
     </main>
     <footer>
@@ -65,5 +80,10 @@
       <p class="controls">← ↑ ↓ → navegar <span>·</span> Enter selecionar <span>·</span> Esc voltar</p>
     </footer>
   </div>
+  <section id="player-panel" class="player-panel" hidden aria-labelledby="player-title" role="dialog" aria-modal="true">
+    <div class="player-header"><h2 id="player-title"></h2><button id="close-player" class="back">← Voltar à lista</button></div>
+    <p id="player-status" role="status" aria-live="polite"></p>
+    <video id="video-player" controls playsinline preload="metadata" referrerpolicy="no-referrer"></video>
+  </section>
 </body>
 </html>
