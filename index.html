@@ -33,14 +33,15 @@
         <p class="eyebrow">SUA BIBLIOTECA</p>
         <h1 id="category-title" tabindex="-1"></h1>
         <div id="playlist-tools" hidden>
+          <p id="playlist-status" role="status" aria-live="polite" tabindex="-1"></p>
           <div class="source-forms">
-            <form id="m3u-link-form" class="source-form">
+            <form id="m3u-link-form" class="source-form" novalidate>
               <h2>Link M3U</h2>
               <label for="m3u-link">Endereço da playlist</label>
               <input id="m3u-link" type="url" placeholder="https://servidor.com/lista.m3u" required autocomplete="off">
               <button class="back" type="submit">Carregar link M3U</button>
             </form>
-            <form id="xtream-form" class="source-form">
+            <form id="xtream-form" class="source-form" novalidate>
               <h2>Xtream</h2>
               <label for="xtream-server">Servidor (com porta, se houver)</label>
               <input id="xtream-server" type="url" placeholder="https://servidor.com:8080" required autocomplete="off">
@@ -51,9 +52,8 @@
               <button class="back" type="submit">Carregar Xtream</button>
             </form>
           </div>
-          <div class="playlist-actions"><label for="playlist-file">Importar arquivo M3U (até 2 MB)</label><input id="playlist-file" type="file" accept=".m3u,.m3u8,text/plain"><button id="demo-list" class="back">Testar com lista de exemplo</button></div>
+          <div class="playlist-actions"><label for="playlist-file">Importar arquivo M3U (até 100 MB)</label><input id="playlist-file" type="file" accept=".m3u,.m3u8,text/plain"><button id="demo-list" class="back">Testar com lista de exemplo</button></div>
           <p class="note">A lista fica apenas nesta sessão. Os dados são enviados diretamente ao servidor informado e não são salvos pelo UniaoTv. No site HTTPS, o servidor precisa oferecer HTTPS e permitir acesso pelo navegador (CORS). A reprodução será adicionada na próxima etapa.</p>
-          <p id="playlist-status" role="status" aria-live="polite"></p>
           <ul id="channel-list" class="channel-list" aria-label="Canais importados"></ul>
           <button id="more-channels" class="back" hidden>Mostrar mais canais</button>
         </div>

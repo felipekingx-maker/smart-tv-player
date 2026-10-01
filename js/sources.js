@@ -1,6 +1,6 @@
 (function (root) {
   'use strict';
-  var MAX_BYTES = 2 * 1024 * 1024;
+  var MAX_BYTES = 100 * 1024 * 1024;
   function validateURL(value, pageProtocol) {
     var url;
     try { url = new URL(value.trim()); }
@@ -25,16 +25,16 @@
     url.searchParams.set('output', 'm3u8');
     return url;
   }
-  async function download(url, fetcher) {
+  async function download(url, fetcher, onProgress) {
     var controller = new AbortController();
-    var timer = setTimeout(function () { controller.abort(); }, 20000);
+    var timer = setTimeout(function () { controller.abort(); }, 120000);
     try {
       var response = await fetcher(url.href, {signal: controller.signal, credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer'});
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) throw new Error('Acesso negado. Verifique os dados e a validade da conta.');
         throw new Error('O servidor não retornou a lista (HTTP ' + response.status + ').');
       }
-      if (Number(response.headers.get('content-length')) > MAX_BYTES) throw new Error('A lista excede o limite de 2 MB desta versão.');
+      if (Number(response.headers.get('content-length')) > MAX_BYTES) throw new Error('A lista excede o limite de 100 MB desta versão.');
       var text;
       if (response.body && response.body.getReader) {
         var reader = response.body.getReader();
@@ -45,13 +45,14 @@
           var part = await reader.read();
           if (part.done) break;
           size += part.value.byteLength;
-          if (size > MAX_BYTES) { await reader.cancel(); throw new Error('A lista excede o limite de 2 MB desta versão.'); }
+          if (size > MAX_BYTES) { await reader.cancel(); throw new Error('A lista excede o limite de 100 MB desta versão.'); }
+          if (onProgress) onProgress(size);
           chunks.push(decoder.decode(part.value, {stream: true}));
         }
         text = chunks.join('') + decoder.decode();
       } else {
         text = await response.text();
-        if (new TextEncoder().encode(text).byteLength > MAX_BYTES) throw new Error('A lista excede o limite de 2 MB desta versão.');
+        if (new TextEncoder().encode(text).byteLength > MAX_BYTES) throw new Error('A lista excede o limite de 100 MB desta versão.');
       }
       return text;
     } catch (error) {

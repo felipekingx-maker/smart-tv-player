@@ -7,8 +7,8 @@ Protótipo web de um reprodutor para Smart TVs, começando pela interface e nave
 - Navegação com setas, Enter e Esc/Backspace para voltar.
 - Layout adaptável para TV, computador e celular.
 - Identificador local persistido no navegador quando o armazenamento está disponível.
-- Importação local de arquivo M3U/M3U8 de até 2 MB em TV ao vivo.
-- Importação por link M3U, com limite de 2 MB e tempo limite de 20 segundos.
+- Importação local de arquivo M3U/M3U8 de até 100 MB em TV ao vivo.
+- Importação por link M3U, com limite de 100 MB e tempo limite de 120 segundos.
 - Importação Xtream por servidor, usuário e senha usando a exportação M3U get.php do provedor.
 - Nomes e grupos dos canais, apresentados em lotes de 100.
 - Lista fictícia para testar a interface sem um arquivo próprio.

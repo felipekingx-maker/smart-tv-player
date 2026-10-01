@@ -13,21 +13,31 @@
   var fileInput = document.getElementById('playlist-file');
   var more = document.getElementById('more-channels');
 
+  function announce(message) {
+    status.textContent = message;
+    status.scrollIntoView({block: 'nearest'});
+  }
+
   async function importRemote(makeURL, sourceName) {
     var version = ++importVersion;
-    status.textContent = 'Carregando ' + sourceName + '…';
+    announce('Conectando ao servidor de ' + sourceName + '… Aguarde até 120 segundos.');
     try {
       var url = makeURL();
-      var text = await window.PlaylistSources.download(url, window.fetch.bind(window));
+      var text = await window.PlaylistSources.download(url, window.fetch.bind(window), function (bytes) {
+        if (version === importVersion) status.textContent = 'Baixando lista: ' + (bytes / 1024 / 1024).toFixed(1) + ' MB recebidos…';
+      });
+      if (version !== importVersion) return;
+      status.textContent = 'Lista recebida. Organizando os itens…';
+      await new Promise(function (resolve) { setTimeout(resolve, 0); });
       if (version !== importVersion) return;
       var parsed;
       try { parsed = window.parseM3U(text); }
       catch (error) { throw new Error('O servidor não retornou uma lista M3U válida. Verifique o link ou os dados da conta.'); }
       channels = parsed;
       renderChannels(true);
-      status.textContent += ' · Origem: ' + sourceName;
+      announce(status.textContent + ' · Origem: ' + sourceName);
     } catch (error) {
-      if (version === importVersion) status.textContent = error.message + ' Sua lista anterior foi mantida.';
+      if (version === importVersion) announce(error.message + (channels.length ? ' Sua lista anterior foi mantida.' : ''));
     }
   }
   document.getElementById('m3u-link-form').addEventListener('submit', function (event) {
@@ -66,12 +76,12 @@
     var file = fileInput.files[0];
     if (!file) return;
     var version = ++importVersion;
-    if (file.size > 2 * 1024 * 1024) {
-      status.textContent = 'Selecione um arquivo de até 2 MB. Sua lista anterior foi mantida.';
+    if (file.size > 100 * 1024 * 1024) {
+      announce('Selecione um arquivo de até 100 MB.');
       fileInput.value = '';
       return;
     }
-    status.textContent = 'Importando lista…';
+    announce('Importando lista…');
     var reader = new FileReader();
     reader.onload = function () {
       if (version !== importVersion) return;
