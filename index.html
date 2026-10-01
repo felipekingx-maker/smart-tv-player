@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#101522">
   <title>UniaoTv</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="./js/m3u.js" defer></script>
   <script src="./js/app.js" defer></script>
 </head>
 <body>
@@ -30,7 +31,14 @@
         <button id="back" class="back">← Voltar</button>
         <p class="eyebrow">SUA BIBLIOTECA</p>
         <h1 id="category-title" tabindex="-1"></h1>
-        <div class="empty-state"><span aria-hidden="true">◇</span><h2 id="empty-title"></h2><p id="empty-description"></p><p class="note">Esta primeira versão testa a interface e a navegação. O cadastro de playlists e a reprodução serão adicionados nas próximas etapas.</p></div>
+        <div id="playlist-tools" hidden>
+          <div class="playlist-actions"><label for="playlist-file">Importar arquivo M3U (até 2 MB)</label><input id="playlist-file" type="file" accept=".m3u,.m3u8,text/plain"><button id="demo-list" class="back">Testar com lista de exemplo</button></div>
+          <p class="note">A lista fica apenas nesta sessão do navegador. A reprodução será adicionada na próxima etapa.</p>
+          <p id="playlist-status" role="status" aria-live="polite"></p>
+          <ul id="channel-list" class="channel-list" aria-label="Canais importados"></ul>
+          <button id="more-channels" class="back" hidden>Mostrar mais canais</button>
+        </div>
+        <div id="empty-state" class="empty-state"><span aria-hidden="true">◇</span><h2 id="empty-title"></h2><p id="empty-description"></p><p class="note">Esta versão testa a interface e a importação de listas. Reprodução e ativação ainda estão em desenvolvimento.</p></div>
       </section>
     </main>
     <footer>

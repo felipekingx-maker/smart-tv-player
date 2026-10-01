@@ -7,9 +7,11 @@ Protótipo web de um reprodutor para Smart TVs, começando pela interface e nave
 - Navegação com setas, Enter e Esc/Backspace para voltar.
 - Layout adaptável para TV, computador e celular.
 - Identificador local persistido no navegador quando o armazenamento está disponível.
-- Telas vazias explicando as funções ainda em desenvolvimento.
+- Importação local de arquivo M3U/M3U8 de até 2 MB em TV ao vivo.
+- Nomes e grupos dos canais, apresentados em lotes de 100.
+- Lista fictícia para testar a interface sem um arquivo próprio.
 
-Não inclui canais, playlists, reprodução, autenticação ou ativação remota. O identificador local não é uma licença, um MAC ou uma credencial de autenticação.
+As listas importadas ficam apenas em memória até recarregar a página. O arquivo é processado no navegador, sem envio ao servidor. Nesta etapa, todas as entradas são exibidas em TV ao vivo; a separação entre filmes e séries virá depois. Não inclui reprodução, autenticação ou ativação remota. O identificador local não é uma licença, um MAC ou uma credencial de autenticação.
 
 ## Testar
 Abra index.html no navegador, ou use um servidor estático na raiz do projeto.
@@ -22,7 +24,7 @@ https://felipekingx-maker.github.io/smart-tv-player/
 Os caminhos dos arquivos são relativos para funcionar no subdiretório do GitHub Pages.
 
 ## Próximas etapas
-1. Cadastro e leitura de playlist M3U.
+1. Importação de lista por URL e classificação do conteúdo.
 2. Reprodução e validação dos formatos suportados.
 3. Backend e pareamento seguro de dispositivos.
 4. Adaptação e testes em Samsung Tizen e LG webOS.

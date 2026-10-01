@@ -5,6 +5,64 @@
   var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
   var back = document.getElementById('back');
   var selected = 0;
+  var channels = [];
+  var shownChannels = 0;
+  var importVersion = 0;
+  var list = document.getElementById('channel-list');
+  var status = document.getElementById('playlist-status');
+  var fileInput = document.getElementById('playlist-file');
+  var more = document.getElementById('more-channels');
+
+  function renderChannels(reset) {
+    if (reset) { list.textContent = ''; shownChannels = 0; }
+    var limit = Math.min(shownChannels + 100, channels.length);
+    for (var i = shownChannels; i < limit; i++) {
+      var item = document.createElement('li');
+      var name = document.createElement('strong');
+      var group = document.createElement('span');
+      name.textContent = channels[i].name;
+      group.textContent = channels[i].group;
+      item.appendChild(name);
+      item.appendChild(group);
+      list.appendChild(item);
+    }
+    shownChannels = limit;
+    status.textContent = channels.length + ' canais importados · ' + shownChannels + ' exibidos';
+    more.hidden = shownChannels >= channels.length;
+    document.getElementById('empty-state').hidden = channels.length > 0;
+  }
+
+  fileInput.addEventListener('change', function () {
+    var file = fileInput.files[0];
+    if (!file) return;
+    var version = ++importVersion;
+    if (file.size > 2 * 1024 * 1024) {
+      status.textContent = 'Selecione um arquivo de até 2 MB. Sua lista anterior foi mantida.';
+      fileInput.value = '';
+      return;
+    }
+    status.textContent = 'Importando lista…';
+    var reader = new FileReader();
+    reader.onload = function () {
+      if (version !== importVersion) return;
+      try { channels = window.parseM3U(reader.result); renderChannels(true); }
+      catch (error) { status.textContent = error.message + ' Sua lista anterior foi mantida.'; }
+      fileInput.value = '';
+    };
+    reader.onerror = function () {
+      if (version !== importVersion) return;
+      status.textContent = 'Não foi possível ler o arquivo. Tente novamente.';
+      fileInput.value = '';
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('demo-list').addEventListener('click', function () {
+    importVersion++;
+    channels = window.parseM3U('#EXTM3U\n#EXTINF:-1 group-title="Exemplo",Canal de exemplo 1\nhttps://example.com/demo1.m3u8\n#EXTINF:-1 group-title="Exemplo",Canal de exemplo 2\nhttps://example.com/demo2.m3u8\n#EXTINF:-1 group-title="Exemplo",Canal de exemplo 3\nhttps://example.com/demo3.m3u8');
+    renderChannels(true);
+    status.textContent += ' · Lista fictícia, sem transmissão.';
+  });
+  more.addEventListener('click', function () { renderChannels(false); if (more.hidden) back.focus(); });
   var descriptions = {
     live: ['TV ao vivo', 'Nenhum canal cadastrado', 'Seus canais aparecerão aqui quando uma playlist for adicionada.'],
     movies: ['Filmes', 'Nenhum filme cadastrado', 'Os filmes disponíveis na sua playlist aparecerão aqui.'],
@@ -44,6 +102,9 @@
     document.getElementById('category-title').textContent = content[0];
     document.getElementById('empty-title').textContent = content[1];
     document.getElementById('empty-description').textContent = content[2];
+    var isLive = cards[index].getAttribute('data-category') === 'live';
+    document.getElementById('playlist-tools').hidden = !isLive;
+    document.getElementById('empty-state').hidden = isLive && channels.length > 0;
     home.hidden = true;
     category.hidden = false;
     back.focus();
@@ -63,6 +124,7 @@
 
   document.addEventListener('keydown', function (event) {
     var key = event.key;
+    if (event.target && /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName)) return;
     if (key === 'Escape' || key === 'Backspace' || event.keyCode === 10009) {
       if (!category.hidden) {
         event.preventDefault();
