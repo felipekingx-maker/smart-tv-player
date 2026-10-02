@@ -17,14 +17,14 @@ p.write_text(s)
 build = Path('app/build.gradle.kts')
 s = build.read_text()
 if 'okhttp-dnsoverhttps' not in s:
-    s = s.replace('    implementation(libs.okhttp)\\n', '    implementation(libs.okhttp)\\n    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.12.0")\\n')
+    s = s.replace('    implementation(libs.okhttp)\n', '    implementation(libs.okhttp)\n    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.12.0")\n')
 build.write_text(s)
 
 # Make the shared HTTP client use Android DNS first and secure DoH only when system DNS fails.
 locator = Path('app/src/main/java/app/opentv/core/ServiceLocator.kt')
 s = locator.read_text()
 if '.dns(FallbackDns())' not in s:
-    s = s.replace('            OkHttpClient.Builder()\\n', '            OkHttpClient.Builder()\\n                .dns(FallbackDns())\\n', 1)
+    s = s.replace('            OkHttpClient.Builder()\n', '            OkHttpClient.Builder()\n                .dns(FallbackDns())\n', 1)
 locator.write_text(s)
 
 # Rebrand visible strings while preserving source-code licence headers.
