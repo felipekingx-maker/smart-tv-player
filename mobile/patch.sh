@@ -10,8 +10,22 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.0.0-mobile"')
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.1.0-mobile"')
 p.write_text(s)
+
+# Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
+build = Path('app/build.gradle.kts')
+s = build.read_text()
+if 'okhttp-dnsoverhttps' not in s:
+    s = s.replace('    implementation(libs.okhttp)\\n', '    implementation(libs.okhttp)\\n    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.12.0")\\n')
+build.write_text(s)
+
+# Make the shared HTTP client use Android DNS first and secure DoH only when system DNS fails.
+locator = Path('app/src/main/java/app/opentv/core/ServiceLocator.kt')
+s = locator.read_text()
+if '.dns(FallbackDns())' not in s:
+    s = s.replace('            OkHttpClient.Builder()\\n', '            OkHttpClient.Builder()\\n                .dns(FallbackDns())\\n', 1)
+locator.write_text(s)
 
 # Rebrand visible strings while preserving source-code licence headers.
 for p in Path('app/src/main/res').glob('values*/strings.xml'):
@@ -41,7 +55,7 @@ s = s.replace(
     'val start = Routes.HOME'
 )
 s = s.replace('        UpdateGate()\n', '')
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.0 (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.1 (Android)')
 main.write_text(s)
 
 # Mobile build only. TV Box receives a separate UI/build later.
@@ -68,6 +82,7 @@ for p in Path('app/src/main/java').rglob('*.kt'):
 PY
 
 cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt
+cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt
 
 cat > app/src/main/res/drawable/uniaotv_logo.xml <<'XML'
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -104,6 +119,8 @@ Changes:
 - Dark navy/cyan visual identity.
 - Home opens before playlist configuration.
 - Upstream self-update prompt disabled for this branded build.
+- v1.1: secure DNS-over-HTTPS fallback when the device/network DNS cannot resolve a provider hostname.
+- HTTPS certificate validation remains enabled.
 
 Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
