@@ -10,7 +10,7 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.1.0-mobile"')
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.2.0-beta"')
 p.write_text(s)
 
 # Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
@@ -55,8 +55,17 @@ s = s.replace(
     'val start = Routes.HOME'
 )
 s = s.replace('        UpdateGate()\n', '')
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.1 (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.2 Beta (Android)')
 main.write_text(s)
+
+# Auto-provision the public beta Xtream test account on app startup.
+app = Path('app/src/main/java/app/opentv/OpenTvApp.kt')
+s = app.read_text()
+s = s.replace(
+    '        SyncWorker.schedule(this)\n',
+    '        SyncWorker.schedule(this)\n        app.opentv.core.BetaAutoProvision.start(this, graph)\n',
+)
+app.write_text(s)
 
 # Mobile build only. TV Box receives a separate UI/build later.
 man = Path('app/src/main/AndroidManifest.xml')
@@ -82,7 +91,7 @@ for p in Path('app/src/main/java').rglob('*.kt'):
 PY
 
 cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt
-cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt
+cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt\ncp "$OLDPWD/mobile/BetaProvider.kt" app/src/main/java/app/opentv/core/BetaProvider.kt\ncp "$OLDPWD/mobile/BetaAutoProvision.kt" app/src/main/java/app/opentv/core/BetaAutoProvision.kt
 
 cat > app/src/main/res/drawable/uniaotv_logo.xml <<'XML'
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -120,7 +129,7 @@ Changes:
 - Home opens before playlist configuration.
 - Upstream self-update prompt disabled for this branded build.
 - v1.1: secure DNS-over-HTTPS fallback when the device/network DNS cannot resolve a provider hostname.
-- HTTPS certificate validation remains enabled.
+- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.
 
 Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
