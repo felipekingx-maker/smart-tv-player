@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +84,7 @@ fun MainScreen(
     onPlayCatchup: (mediaKey: String, url: String, title: String, ua: String) -> Unit,
     activeProfileName: String,
 ) {
-    var section by remember { mutableStateOf(MobileSection.HOME) }
+    var section by rememberSaveable { mutableStateOf(MobileSection.HOME) }
 
     BackHandler(enabled = section != MobileSection.HOME) {
         section = MobileSection.HOME
