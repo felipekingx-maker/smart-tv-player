@@ -10,7 +10,7 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.3.5-visual-beta"')
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.3.6-visual-beta"')
 p.write_text(s)
 
 # Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
@@ -55,7 +55,7 @@ s = s.replace(
     'val start = Routes.HOME'
 )
 s = s.replace('        UpdateGate()\n', '')
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.3.5 Visual Beta (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.3.6 Visual Beta (Android)')
 main.write_text(s)
 
 # Auto-provision the public beta Xtream test account on app startup.
@@ -108,6 +108,29 @@ s = s.replace(
     'onClick = { viewModel.selectCategory(group.key); railExpanded = false },'
 )
 guide.write_text(s)
+
+# Mobile landscape preview fix: shrink the mini player/header area in landscape so channel rows remain visible.
+preview = Path('app/src/main/java/app/opentv/ui/channels/GuidePreview.kt')
+s = preview.read_text()
+if 'import androidx.compose.ui.platform.LocalConfiguration' not in s:
+    s = s.replace(
+        'import androidx.compose.ui.res.stringResource\n',
+        'import androidx.compose.ui.res.stringResource\nimport androidx.compose.ui.platform.LocalConfiguration\n'
+    )
+if 'import android.content.res.Configuration' not in s:
+    s = s.replace(
+        'import android.view.ViewGroup\n',
+        'import android.view.ViewGroup\nimport android.content.res.Configuration\n'
+    )
+s = s.replace(
+    'fun GuidePreview(\n',
+    'fun GuidePreview(\n'
+)
+s = s.replace(
+    ') {\n    Row(\n        modifier\n            .fillMaxWidth()\n            .height(212.dp)',
+    ') {\n    val configuration = LocalConfiguration.current\n    val previewHeight = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 118.dp else 190.dp\n    Row(\n        modifier\n            .fillMaxWidth()\n            .height(previewHeight)'
+)
+preview.write_text(s)
 
 # Phone live-TV layout: force the readable list view so each logo is accompanied by the channel name.
 guide = Path('app/src/main/java/app/opentv/ui/channels/HomeScreen.kt')
@@ -191,7 +214,7 @@ Changes:
 - Home opens before playlist configuration.
 - Upstream self-update prompt disabled for this branded build.
 - v1.1: secure DNS-over-HTTPS fallback when the device/network DNS cannot resolve a provider hostname.
-- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.\n- v1.3.1: mobile TV list now always shows channel logo plus channel name and programme information.\n- v1.3.2: provider configuration is hidden from beta users; embedded account remains internal.\n- v1.3.3: mobile TV split-pane narrowed the folder rail so channel cards have room for logo, number and channel name.\n- v1.3.4: selecting a TV folder hides the folder list and shows channels full-width; Back reopens folders.\n- v1.3.5: returning from the live player keeps the TV tab, selected folder and channel-list state instead of returning to Highlights.
+- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.\n- v1.3.1: mobile TV list now always shows channel logo plus channel name and programme information.\n- v1.3.2: provider configuration is hidden from beta users; embedded account remains internal.\n- v1.3.3: mobile TV split-pane narrowed the folder rail so channel cards have room for logo, number and channel name.\n- v1.3.4: selecting a TV folder hides the folder list and shows channels full-width; Back reopens folders.\n- v1.3.5: returning from the live player keeps the TV tab, selected folder and channel-list state instead of returning to Highlights.\n- v1.3.6: mini player becomes compact in landscape so the channel list stays visible.
 
 Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
