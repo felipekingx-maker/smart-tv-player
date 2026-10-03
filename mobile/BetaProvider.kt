@@ -10,8 +10,8 @@ import app.opentv.data.model.SourceKind
 object BetaProvider {
     const val PRIMARY_URL = "http://fragata.lat"
     const val SECONDARY_URL = "http://clipper.lat"
-    const val USERNAME = "861578702"
-    const val PASSWORD = "618872517"
+    const val USERNAME = "939588716"
+    const val PASSWORD = "246338678"
 
     fun primary() = Source(
         name = "UniaoTV",
