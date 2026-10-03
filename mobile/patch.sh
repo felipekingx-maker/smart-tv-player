@@ -91,7 +91,9 @@ for p in Path('app/src/main/java').rglob('*.kt'):
 PY
 
 cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt
-cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt\ncp "$OLDPWD/mobile/BetaProvider.kt" app/src/main/java/app/opentv/core/BetaProvider.kt\ncp "$OLDPWD/mobile/BetaAutoProvision.kt" app/src/main/java/app/opentv/core/BetaAutoProvision.kt
+cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt
+cp "$OLDPWD/mobile/BetaProvider.kt" app/src/main/java/app/opentv/core/BetaProvider.kt
+cp "$OLDPWD/mobile/BetaAutoProvision.kt" app/src/main/java/app/opentv/core/BetaAutoProvision.kt
 
 cat > app/src/main/res/drawable/uniaotv_logo.xml <<'XML'
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
