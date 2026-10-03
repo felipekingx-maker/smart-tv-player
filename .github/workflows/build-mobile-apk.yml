@@ -43,23 +43,23 @@ jobs:
 
       - name: Prepare files
         run: |
-          cp upstream/app/build/outputs/apk/debug/app-debug.apk UniaoTV-mobile-v1.3.4-visual-beta.apk
-          sha256sum UniaoTV-mobile-v1.3.4-visual-beta.apk > UniaoTV-mobile-v1.3.4-visual-beta.apk.sha256
-          (cd upstream && zip -qr ../UniaoTV-mobile-v1.3.4-visual-beta-source.zip . -x '.git/*' '.gradle/*' 'app/build/*')
+          cp upstream/app/build/outputs/apk/debug/app-debug.apk UniaoTV-mobile-v1.3.5-visual-beta.apk
+          sha256sum UniaoTV-mobile-v1.3.5-visual-beta.apk > UniaoTV-mobile-v1.3.5-visual-beta.apk.sha256
+          (cd upstream && zip -qr ../UniaoTV-mobile-v1.3.5-visual-beta-source.zip . -x '.git/*' '.gradle/*' 'app/build/*')
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: UniaoTV-mobile-v1.3.4-visual-beta
+          name: UniaoTV-mobile-v1.3.5-visual-beta
           path: |
-            UniaoTV-mobile-v1.3.4-visual-beta.apk
-            UniaoTV-mobile-v1.3.4-visual-beta.apk.sha256
-            UniaoTV-mobile-v1.3.4-visual-beta-source.zip
+            UniaoTV-mobile-v1.3.5-visual-beta.apk
+            UniaoTV-mobile-v1.3.5-visual-beta.apk.sha256
+            UniaoTV-mobile-v1.3.5-visual-beta-source.zip
 
       - name: Publish test release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete uniaotv-mobile-v1.3.4-visual-beta --yes || true
-          git push origin :refs/tags/uniaotv-mobile-v1.3.4-visual-beta || true
-          gh release create uniaotv-mobile-v1.3.4-visual-beta             UniaoTV-mobile-v1.3.4-visual-beta.apk             UniaoTV-mobile-v1.3.4-visual-beta.apk.sha256             UniaoTV-mobile-v1.3.4-visual-beta-source.zip             --title 'UniaoTV Mobile v1.3.4 Visual Beta'             --notes 'Fluxo mobile revisado: ao selecionar uma pasta, a coluna de pastas fecha e os canais ocupam a largura disponivel; o botao Voltar reabre as pastas antes de sair da TV. Mantem conta beta e configuracoes do fornecedor ocultas. Base GPL: OpenTV.'
+          gh release delete uniaotv-mobile-v1.3.5-visual-beta --yes || true
+          git push origin :refs/tags/uniaotv-mobile-v1.3.5-visual-beta || true
+          gh release create uniaotv-mobile-v1.3.5-visual-beta             UniaoTV-mobile-v1.3.5-visual-beta.apk             UniaoTV-mobile-v1.3.5-visual-beta.apk.sha256             UniaoTV-mobile-v1.3.5-visual-beta-source.zip             --title 'UniaoTV Mobile v1.3.5 Visual Beta'             --notes 'Fluxo mobile revisado: ao sair de um canal, o app retorna para TV mantendo a pasta selecionada e a lista de canais; Voltar na lista reabre as pastas antes de sair da TV. Mantem conta beta e configuracoes do fornecedor ocultas. Base GPL: OpenTV.'
