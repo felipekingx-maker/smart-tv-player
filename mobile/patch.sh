@@ -10,7 +10,7 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.2.0-beta"')
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.3.0-visual-beta"')
 p.write_text(s)
 
 # Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
@@ -41,8 +41,8 @@ if pt.exists():
 # UniaoTV dark navy / cyan palette.
 Path('app/src/main/res/values/colors.xml').write_text("""<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="window_background">#FF020817</color>
-    <color name="accent">#FF00C8FF</color>
+    <color name="window_background">#FF160306</color>
+    <color name="accent">#FFFF5865</color>
 </resources>
 """)
 
@@ -55,7 +55,7 @@ s = s.replace(
     'val start = Routes.HOME'
 )
 s = s.replace('        UpdateGate()\n', '')
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.2 Beta (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.3 Visual Beta (Android)')
 main.write_text(s)
 
 # Auto-provision the public beta Xtream test account on app startup.
@@ -131,7 +131,7 @@ Changes:
 - Home opens before playlist configuration.
 - Upstream self-update prompt disabled for this branded build.
 - v1.1: secure DNS-over-HTTPS fallback when the device/network DNS cannot resolve a provider hostname.
-- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.
+- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.
 
 Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
