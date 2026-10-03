@@ -10,7 +10,7 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.3.3-visual-beta"')
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.3.4-visual-beta"')
 p.write_text(s)
 
 # Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
@@ -55,7 +55,7 @@ s = s.replace(
     'val start = Routes.HOME'
 )
 s = s.replace('        UpdateGate()\n', '')
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.3.3 Visual Beta (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.3.4 Visual Beta (Android)')
 main.write_text(s)
 
 # Auto-provision the public beta Xtream test account on app startup.
@@ -74,6 +74,33 @@ s = guide.read_text()
 s = s.replace(
     'targetValue = if (railExpanded) 240.dp else 0.dp',
     'targetValue = if (railExpanded) 145.dp else 0.dp'
+)
+guide.write_text(s)
+
+# Mobile folder drill-in: tapping a TV folder hides the folder rail and gives the full width to channels.
+# Android Back reopens the folder rail before leaving the TV section.
+guide = Path('app/src/main/java/app/opentv/ui/channels/HomeScreen.kt')
+s = guide.read_text()
+if 'import androidx.activity.compose.BackHandler' not in s:
+    s = s.replace(
+        'package app.opentv.ui.channels\n\n',
+        'package app.opentv.ui.channels\n\nimport androidx.activity.compose.BackHandler\n'
+    )
+s = s.replace(
+    '    var railExpanded by remember { mutableStateOf(true) }',
+    '    var railExpanded by remember { mutableStateOf(true) }\n    BackHandler(enabled = !railExpanded) { railExpanded = true }'
+)
+s = s.replace(
+    'onClick = viewModel::selectFavourites,',
+    'onClick = { viewModel.selectFavourites(); railExpanded = false },'
+)
+s = s.replace(
+    'onClick = { viewModel.selectCategory(null) },',
+    'onClick = { viewModel.selectCategory(null); railExpanded = false },'
+)
+s = s.replace(
+    'onClick = { viewModel.selectCategory(group.key) },',
+    'onClick = { viewModel.selectCategory(group.key); railExpanded = false },'
 )
 guide.write_text(s)
 
@@ -159,7 +186,7 @@ Changes:
 - Home opens before playlist configuration.
 - Upstream self-update prompt disabled for this branded build.
 - v1.1: secure DNS-over-HTTPS fallback when the device/network DNS cannot resolve a provider hostname.
-- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.\n- v1.3.1: mobile TV list now always shows channel logo plus channel name and programme information.\n- v1.3.2: provider configuration is hidden from beta users; embedded account remains internal.\n- v1.3.3: mobile TV split-pane narrowed the folder rail so channel cards have room for logo, number and channel name.
+- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.\n- v1.3.1: mobile TV list now always shows channel logo plus channel name and programme information.\n- v1.3.2: provider configuration is hidden from beta users; embedded account remains internal.\n- v1.3.3: mobile TV split-pane narrowed the folder rail so channel cards have room for logo, number and channel name.\n- v1.3.4: selecting a TV folder hides the folder list and shows channels full-width; Back reopens folders.
 
 Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
