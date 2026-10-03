@@ -4,6 +4,7 @@
  */
 package app.opentv.ui
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -157,6 +159,60 @@ private fun UniaoHeader(
     onSearch: () -> Unit,
     onSettings: () -> Unit,
 ) {
+    val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    if (landscape) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF5A0308), Color(0xFF3B0206)),
+                    ),
+                )
+                .padding(horizontal = 12.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Image(
+                painter = painterResource(R.drawable.uniaotv_logo),
+                contentDescription = "UniaoTV",
+                modifier = Modifier.size(30.dp),
+            )
+            Text(
+                text = "UniaoTV",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+            )
+            Spacer(Modifier.width(8.dp))
+
+            MobileSection.entries.forEach { tab ->
+                val selected = current == tab
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (selected) Color(0xFF8E1420) else Color.Transparent)
+                        .clickable { onSelect(tab) }
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = tab.label,
+                        color = if (selected) Color.White else Color(0xFFE1CBCD),
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+
+            Spacer(Modifier.weight(1f))
+            HeaderIcon(Icons.Filled.Search, "Buscar", onSearch)
+            Spacer(Modifier.width(2.dp))
+            HeaderIcon(Icons.Filled.Settings, "Configurações", onSettings)
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
