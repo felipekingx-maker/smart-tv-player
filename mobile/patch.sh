@@ -70,11 +70,11 @@ old_parts = """        private fun versionParts(v: String): List<Int> =
                 .split('.', '-', '+')
                 .map { part -> part.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
 """
-new_parts = """        private fun versionParts(v: String): List<Int> {
+new_parts = '''        private fun versionParts(v: String): List<Int> {
             val match = Regex("""\\d+(?:\\.\\d+)+""").find(v)?.value ?: return emptyList()
             return match.split('.').mapNotNull { it.toIntOrNull() }
         }
-"""
+'''
 s = s.replace(old_parts, new_parts)
 checker.write_text(s)
 
