@@ -10,7 +10,7 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.3.7-visual-beta"')
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.4.0-beta"')
 p.write_text(s)
 
 # Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
@@ -49,14 +49,52 @@ Path('app/src/main/res/values/colors.xml').write_text("""<?xml version="1.0" enc
 # First launch opens the mobile hub. Provider/list setup remains inside Configuracoes.
 main = Path('app/src/main/java/app/opentv/MainActivity.kt')
 s = main.read_text()
-s = s.replace('import app.opentv.update.UpdateGate\n', '')
 s = s.replace(
     'val start = if (sourcesUi.sources.isEmpty()) Routes.ADD_SOURCE else Routes.HOME',
     'val start = Routes.HOME'
 )
-s = s.replace('        UpdateGate()\n', '')
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.3.7 Visual Beta (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.4 Beta (Android)')
+if 'import app.opentv.ui.UniaoLoginGate' not in s:
+    s = s.replace('import app.opentv.ui.MainScreen\n', 'import app.opentv.ui.MainScreen\nimport app.opentv.ui.UniaoLoginGate\n')
+s = s.replace('                    OpenTvApp(isTelevision = isTelevision)', '                    UniaoLoginGate { OpenTvApp(isTelevision = isTelevision) }')
 main.write_text(s)
+
+
+# UniaoTV self-update: check this repository's latest GitHub release and offer in-app APK update.
+checker = Path('app/src/main/java/app/opentv/update/UpdateChecker.kt')
+s = checker.read_text()
+s = s.replace('const val REPO_SLUG = "opentvproject/opentv"', 'const val REPO_SLUG = "felipekingx-maker/smart-tv-player"')
+s = s.replace('.header("User-Agent", "OpenTV")', '.header("User-Agent", "UniaoTV")')
+old_parts = """        private fun versionParts(v: String): List<Int> =
+            v.trim().trimStart('v', 'V')
+                .split('.', '-', '+')
+                .map { part -> part.takeWhile(Char::isDigit).toIntOrNull() ?: 0 }
+"""
+new_parts = """        private fun versionParts(v: String): List<Int> {
+            val match = Regex("""\\d+(?:\\.\\d+)+""").find(v)?.value ?: return emptyList()
+            return match.split('.').mapNotNull { it.toIntOrNull() }
+        }
+"""
+s = s.replace(old_parts, new_parts)
+checker.write_text(s)
+
+update_ui = Path('app/src/main/java/app/opentv/update/UpdateScreen.kt')
+s = update_ui.read_text()
+s = s.replace('Text("Update")', 'Text("Atualizar agora")')
+s = s.replace('Text("Later")', 'Text("Depois")')
+s = s.replace('Text("Update available")', 'Text("Nova atualização disponível")')
+s = s.replace('Text("OpenTV ${s.update.versionName} is available. You have ${BuildConfig.VERSION_NAME}.")',
+              'Text("UniaoTV ${s.update.versionName} está disponível. Sua versão é ${BuildConfig.VERSION_NAME}.")')
+s = s.replace('Text("Downloading update…")', 'Text("Baixando atualização…")')
+s = s.replace('Text("Retry")', 'Text("Tentar novamente")')
+s = s.replace('Text("Close")', 'Text("Fechar")')
+s = s.replace('Text("Update failed")', 'Text("Falha na atualização")')
+s = s.replace('Text("Could not download the update. Check the connection and try again.")',
+              'Text("Não foi possível baixar a atualização. Verifique a conexão e tente novamente.")')
+s = s.replace('const val CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000L // 6 hours',
+              'const val CHECK_INTERVAL_MS = 30 * 60 * 1000L // 30 minutes')
+update_ui.write_text(s)
+
 
 # Auto-provision the public beta Xtream test account on app startup.
 app = Path('app/src/main/java/app/opentv/OpenTvApp.kt')
@@ -218,6 +256,7 @@ for p in Path('app/src/main/java').rglob('*.kt'):
 PY
 
 cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt
+cp "$OLDPWD/mobile/UniaoLoginGate.kt" app/src/main/java/app/opentv/ui/UniaoLoginGate.kt
 cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt
 cp "$OLDPWD/mobile/BetaProvider.kt" app/src/main/java/app/opentv/core/BetaProvider.kt
 cp "$OLDPWD/mobile/BetaAutoProvision.kt" app/src/main/java/app/opentv/core/BetaAutoProvision.kt
@@ -256,9 +295,9 @@ Changes:
 - Touch-first home with TV, Filmes, Series and Configuracoes.
 - Dark navy/cyan visual identity.
 - Home opens before playlist configuration.
-- Upstream self-update prompt disabled for this branded build.
+- UniaoTV self-update prompt checks the UniaoTV GitHub release and offers APK installation.
 - v1.1: secure DNS-over-HTTPS fallback when the device/network DNS cannot resolve a provider hostname.
-- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.\n- v1.3.1: mobile TV list now always shows channel logo plus channel name and programme information.\n- v1.3.2: provider configuration is hidden from beta users; embedded account remains internal.\n- v1.3.3: mobile TV split-pane narrowed the folder rail so channel cards have room for logo, number and channel name.\n- v1.3.4: selecting a TV folder hides the folder list and shows channels full-width; Back reopens folders.\n- v1.3.5: returning from the live player keeps the TV tab, selected folder and channel-list state instead of returning to Highlights.\n- v1.3.6: mini player becomes compact in landscape so the channel list stays visible.\n- v1.3.7: landscape header and Movies/Series filters are compact so poster art stays fully visible.
+- HTTPS certificate validation remains enabled.\n- v1.2 beta: auto-login with a public test Xtream account and primary/secondary server fallback.\n- v1.3 visual beta: redesigned UniaoTV shell inspired by the reference app: burgundy theme, top navigation, hero and content cards.\n- v1.3.1: mobile TV list now always shows channel logo plus channel name and programme information.\n- v1.3.2: provider configuration is hidden from beta users; embedded account remains internal.\n- v1.3.3: mobile TV split-pane narrowed the folder rail so channel cards have room for logo, number and channel name.\n- v1.3.4: selecting a TV folder hides the folder list and shows channels full-width; Back reopens folders.\n- v1.3.5: returning from the live player keeps the TV tab, selected folder and channel-list state instead of returning to Highlights.\n- v1.3.6: mini player becomes compact in landscape so the channel list stays visible.\n- v1.3.7: landscape header and Movies/Series filters are compact so poster art stays fully visible.\n- v1.4.0 beta: app access login added (beta admin/admin) and self-update enabled for UniaoTV releases.
 
 Upstream: https://github.com/opentvproject/opentv
 Modified project: https://github.com/felipekingx-maker/smart-tv-player
