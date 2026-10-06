@@ -1,0 +1,1 @@
+Forca build unica apos corrigir corrida de releases.
