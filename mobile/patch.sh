@@ -257,7 +257,8 @@ for p in Path('app/src/main/java').rglob('*.kt'):
     p.write_text(s)
 PY
 
-cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt\ncp "$OLDPWD/mobile/LuaCloneScreens.kt" app/src/main/java/app/opentv/ui/LuaCloneScreens.kt
+cp "$OLDPWD/mobile/MainScreen.kt" app/src/main/java/app/opentv/ui/MainScreen.kt
+cp "$OLDPWD/mobile/LuaCloneScreens.kt" app/src/main/java/app/opentv/ui/LuaCloneScreens.kt
 cp "$OLDPWD/mobile/UniaoLoginGate.kt" app/src/main/java/app/opentv/ui/UniaoLoginGate.kt
 cp "$OLDPWD/mobile/FallbackDns.kt" app/src/main/java/app/opentv/core/FallbackDns.kt
 cp "$OLDPWD/mobile/BetaProvider.kt" app/src/main/java/app/opentv/core/BetaProvider.kt
