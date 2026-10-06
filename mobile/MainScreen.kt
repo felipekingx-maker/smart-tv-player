@@ -98,9 +98,9 @@ fun MainScreen(
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        Color(0xFF300306),
-                        Color(0xFF160306),
-                        Color(0xFF09090D),
+                        Color(0xFF14050A),
+                        Color(0xFF090A0F),
+                        Color(0xFF050609),
                     ),
                 ),
             ),
@@ -167,7 +167,7 @@ private fun UniaoHeader(
                 .fillMaxWidth()
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF5A0308), Color(0xFF3B0206)),
+                        listOf(Color(0xFF111218), Color(0xFF090A0F)),
                     ),
                 )
                 .padding(horizontal = 12.dp, vertical = 7.dp),
@@ -192,13 +192,13 @@ private fun UniaoHeader(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(if (selected) Color(0xFF8E1420) else Color.Transparent)
+                        .background(if (selected) Color(0xFFB20F34) else Color.Transparent)
                         .clickable { onSelect(tab) }
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                 ) {
                     Text(
                         text = tab.label,
-                        color = if (selected) Color.White else Color(0xFFE1CBCD),
+                        color = if (selected) Color.White else Color(0xFFB9BCC6),
                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                         style = MaterialTheme.typography.labelLarge,
                     )
@@ -218,7 +218,7 @@ private fun UniaoHeader(
             .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFF5A0308), Color(0xFF3B0206)),
+                    listOf(Color(0xFF111218), Color(0xFF090A0F)),
                 ),
             ),
     ) {
@@ -260,7 +260,7 @@ private fun UniaoHeader(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .background(
-                            if (selected) Color(0xFF8E1420)
+                            if (selected) Color(0xFFB20F34)
                             else Color.Transparent,
                         )
                         .clickable { onSelect(tab) }
@@ -268,7 +268,7 @@ private fun UniaoHeader(
                 ) {
                     Text(
                         text = tab.label,
-                        color = if (selected) Color.White else Color(0xFFE1CBCD),
+                        color = if (selected) Color.White else Color(0xFFB9BCC6),
                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                         style = MaterialTheme.typography.labelLarge,
                     )
@@ -284,7 +284,7 @@ private fun HeaderIcon(icon: ImageVector, description: String, onClick: () -> Un
         modifier = Modifier
             .size(42.dp)
             .clip(RoundedCornerShape(13.dp))
-            .background(Color.White.copy(alpha = 0.08f))
+            .background(Color(0xFF191B23))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -316,9 +316,9 @@ private fun HighlightsHome(
                 .background(
                     Brush.linearGradient(
                         listOf(
-                            Color(0xFF76121B),
-                            Color(0xFF27101B),
-                            Color(0xFF11151E),
+                            Color(0xFF2D0B15),
+                            Color(0xFF15121A),
+                            Color(0xFF0C0D12),
                         ),
                     ),
                 )
@@ -331,7 +331,7 @@ private fun HighlightsHome(
             ) {
                 Text(
                     text = "UNIAOTV",
-                    color = Color(0xFFFFD7DA),
+                    color = Color(0xFFFFB5C4),
                     fontWeight = FontWeight.Black,
                     style = MaterialTheme.typography.labelLarge,
                 )
@@ -347,7 +347,7 @@ private fun HighlightsHome(
                 Spacer(Modifier.height(10.dp))
                 Text(
                     text = "TV ao vivo, filmes e séries com acesso rápido.",
-                    color = Color(0xFFE8D5D7),
+                    color = Color(0xFFB8BBC4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(16.dp))
@@ -359,7 +359,7 @@ private fun HighlightsHome(
                 ) {
                     Text(
                         "EXPLORAR",
-                        color = Color(0xFF56070D),
+                        color = Color(0xFF860D2B),
                         fontWeight = FontWeight.Bold,
                     )
                 }
@@ -443,15 +443,15 @@ private fun QuickTile(
         modifier = modifier
             .height(118.dp)
             .clip(RoundedCornerShape(15.dp))
-            .background(Color(0xFF21151A))
+            .background(Color(0xFF13151C))
             .clickable(onClick = onClick)
             .padding(13.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Icon(icon, contentDescription = title, tint = Color(0xFFFF5865), modifier = Modifier.size(28.dp))
+        Icon(icon, contentDescription = title, tint = Color(0xFFE1274D), modifier = Modifier.size(28.dp))
         Column {
             Text(title, color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
-            Text(subtitle, color = Color(0xFFBDAEB1), style = MaterialTheme.typography.bodySmall, maxLines = 1)
+            Text(subtitle, color = Color(0xFF8F949F), style = MaterialTheme.typography.bodySmall, maxLines = 1)
         }
     }
 }
@@ -470,7 +470,7 @@ private fun PromoTile(
             .clip(RoundedCornerShape(15.dp))
             .background(
                 Brush.linearGradient(
-                    listOf(Color(0xFF3B151B), Color(0xFF19151B)),
+                    listOf(Color(0xFF19141A), Color(0xFF101218)),
                 ),
             )
             .clickable(onClick = onClick)
@@ -481,7 +481,7 @@ private fun PromoTile(
             modifier = Modifier
                 .size(46.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF7A101A)),
+                .background(Color(0xFF5A1024)),
             contentAlignment = Alignment.Center,
         ) {
             Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(25.dp))
@@ -489,7 +489,7 @@ private fun PromoTile(
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Text(title, color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
-            Text(subtitle, color = Color(0xFFBFAFB1), style = MaterialTheme.typography.bodySmall, maxLines = 1)
+            Text(subtitle, color = Color(0xFF90949D), style = MaterialTheme.typography.bodySmall, maxLines = 1)
         }
     }
 }
@@ -503,20 +503,20 @@ private fun StatusBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF150B0E))
+            .background(Color(0xFF0B0C11))
             .padding(horizontal = 14.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (progress == null) {
-            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = Color(0xFFFF5865))
+            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp, color = Color(0xFFE1274D))
         } else {
-            Text("${(progress!! * 100).toInt()}%", color = Color(0xFFFF5865))
+            Text("${(progress!! * 100).toInt()}%", color = Color(0xFFE1274D))
         }
         Text(
             text,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(start = 10.dp),
-            color = Color(0xFFD2C3C5),
+            color = Color(0xFFA7AAB3),
         )
     }
 }
