@@ -10,7 +10,9 @@ from pathlib import Path
 p = Path('app/build.gradle.kts')
 s = p.read_text()
 s = s.replace('applicationId = "app.opentv"', 'applicationId = "app.uniaotv.mobile"')
-s = s.replace('versionName = "0.11.8"', 'versionName = "1.4.0-beta"')
+import re
+s = s.replace('versionName = "0.11.8"', 'versionName = "1.4.1-beta"')
+s = re.sub(r'versionCode\s*=\s*\d+', 'versionCode = 141', s, count=1)
 p.write_text(s)
 
 # Add OkHttp DNS-over-HTTPS module for a secure fallback resolver.
@@ -53,7 +55,7 @@ s = s.replace(
     'val start = if (sourcesUi.sources.isEmpty()) Routes.ADD_SOURCE else Routes.HOME',
     'val start = Routes.HOME'
 )
-s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.4 Beta (Android)')
+s = s.replace('OpenTV/0.1 (Android)', 'UniaoTV/1.4.1 Beta (Android)')
 if 'import app.opentv.ui.UniaoLoginGate' not in s:
     s = s.replace('import app.opentv.ui.MainScreen\n', 'import app.opentv.ui.MainScreen\nimport app.opentv.ui.UniaoLoginGate\n')
 s = s.replace('                    OpenTvApp(isTelevision = isTelevision)', '                    UniaoLoginGate { OpenTvApp(isTelevision = isTelevision) }')
