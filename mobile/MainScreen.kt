@@ -118,6 +118,7 @@ fun MainScreen(
                     onLive = { section = MobileSection.LIVE },
                     onMovies = { section = MobileSection.MOVIES },
                     onSeries = { section = MobileSection.SERIES },
+                    onSettings = onOpenSettings,
                 )
 
                 MobileSection.LIVE -> HomeScreen(
@@ -302,194 +303,208 @@ private fun HighlightsHome(
     onLive: () -> Unit,
     onMovies: () -> Unit,
     onSeries: () -> Unit,
+    onSettings: () -> Unit,
 ) {
+    val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+            .padding(horizontal = if (landscape) 28.dp else 16.dp, vertical = 18.dp),
     ) {
-        Box(
+        Text(
+            text = "HOME",
+            color = Color(0xFF9DA1AB),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = "Escolha o que assistir",
+            color = Color.White,
+            style = if (landscape) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(Modifier.height(if (landscape) 22.dp else 16.dp))
+
+        if (landscape) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                LuaHomeTile(
+                    title = "TV AO VIVO",
+                    subtitle = "Canais",
+                    icon = Icons.Filled.LiveTv,
+                    modifier = Modifier.weight(1f),
+                    onClick = onLive,
+                )
+                LuaHomeTile(
+                    title = "FILMES",
+                    subtitle = "Vídeo sob demanda",
+                    icon = Icons.Filled.Movie,
+                    modifier = Modifier.weight(1f),
+                    onClick = onMovies,
+                )
+                LuaHomeTile(
+                    title = "SÉRIES",
+                    subtitle = "Temporadas e episódios",
+                    icon = Icons.Filled.Tv,
+                    modifier = Modifier.weight(1f),
+                    onClick = onSeries,
+                )
+                LuaHomeTile(
+                    title = "CONFIGURAÇÕES",
+                    subtitle = "Conta e listas",
+                    icon = Icons.Filled.Settings,
+                    modifier = Modifier.weight(1f),
+                    onClick = onSettings,
+                )
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                LuaHomeTile(
+                    title = "TV AO VIVO",
+                    subtitle = "Canais",
+                    icon = Icons.Filled.LiveTv,
+                    modifier = Modifier.weight(1f),
+                    onClick = onLive,
+                )
+                LuaHomeTile(
+                    title = "FILMES",
+                    subtitle = "Vídeo sob demanda",
+                    icon = Icons.Filled.Movie,
+                    modifier = Modifier.weight(1f),
+                    onClick = onMovies,
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                LuaHomeTile(
+                    title = "SÉRIES",
+                    subtitle = "Temporadas e episódios",
+                    icon = Icons.Filled.Tv,
+                    modifier = Modifier.weight(1f),
+                    onClick = onSeries,
+                )
+                LuaHomeTile(
+                    title = "CONFIGURAÇÕES",
+                    subtitle = "Conta e listas",
+                    icon = Icons.Filled.Settings,
+                    modifier = Modifier.weight(1f),
+                    onClick = onSettings,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(18.dp))
+
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(210.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(
-                    Brush.linearGradient(
-                        listOf(
-                            Color(0xFF2D0B15),
-                            Color(0xFF15121A),
-                            Color(0xFF0C0D12),
-                        ),
-                    ),
-                )
-                .clickable(onClick = onMovies),
+                .clip(RoundedCornerShape(14.dp))
+                .background(Color(0xFF10131A))
+                .padding(horizontal = 16.dp, vertical = 13.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(22.dp),
-            ) {
+                    .size(8.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color(0xFF36D178)),
+            )
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.weight(1f)) {
                 Text(
-                    text = "UNIAOTV",
-                    color = Color(0xFFFFB5C4),
-                    fontWeight = FontWeight.Black,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = "Tudo que você gosta,\nem um só lugar",
+                    text = "UniaoTV",
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = "TV ao vivo, filmes e séries com acesso rápido.",
-                    color = Color(0xFFB8BBC4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                Spacer(Modifier.height(16.dp))
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                        .padding(horizontal = 18.dp, vertical = 10.dp),
-                ) {
-                    Text(
-                        "EXPLORAR",
-                        color = Color(0xFF860D2B),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+                Text(
+                    text = "Pronto para reproduzir sua lista",
+                    color = Color(0xFF8F949F),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
-
-            Icon(
-                imageVector = Icons.Filled.Movie,
-                contentDescription = null,
-                tint = Color.White.copy(alpha = 0.10f),
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 18.dp)
-                    .size(130.dp),
-            )
-        }
-
-        Spacer(Modifier.height(18.dp))
-        Text(
-            text = "Navegue por categoria",
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(Modifier.height(10.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            QuickTile(
-                title = "TV",
-                subtitle = "Canais ao vivo",
-                icon = Icons.Filled.LiveTv,
-                modifier = Modifier.weight(1f),
-                onClick = onLive,
-            )
-            QuickTile(
-                title = "FILMES",
-                subtitle = "Catálogo",
-                icon = Icons.Filled.Movie,
-                modifier = Modifier.weight(1f),
-                onClick = onMovies,
-            )
-            QuickTile(
-                title = "SÉRIES",
-                subtitle = "Temporadas",
-                icon = Icons.Filled.Tv,
-                modifier = Modifier.weight(1f),
-                onClick = onSeries,
-            )
-        }
-
-        Spacer(Modifier.height(18.dp))
-        Text(
-            text = "Destaques",
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(Modifier.height(10.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            PromoTile("TV AO VIVO", "Acesse seus canais", Icons.Filled.LiveTv, onLive, Modifier.weight(1f))
-            PromoTile("CINEMA", "Veja os filmes", Icons.Filled.Movie, onMovies, Modifier.weight(1f))
         }
     }
 }
 
 @Composable
-private fun QuickTile(
+private fun LuaHomeTile(
     title: String,
     subtitle: String,
     icon: ImageVector,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Column(
+    Box(
         modifier = modifier
-            .height(118.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(Color(0xFF13151C))
-            .clickable(onClick = onClick)
-            .padding(13.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Icon(icon, contentDescription = title, tint = Color(0xFFE1274D), modifier = Modifier.size(28.dp))
-        Column {
-            Text(title, color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
-            Text(subtitle, color = Color(0xFF8F949F), style = MaterialTheme.typography.bodySmall, maxLines = 1)
-        }
-    }
-}
-
-@Composable
-private fun PromoTile(
-    title: String,
-    subtitle: String,
-    icon: ImageVector,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .height(82.dp)
-            .clip(RoundedCornerShape(15.dp))
+            .height(178.dp)
+            .clip(RoundedCornerShape(18.dp))
             .background(
                 Brush.linearGradient(
-                    listOf(Color(0xFF19141A), Color(0xFF101218)),
+                    listOf(
+                        Color(0xFF1B2029),
+                        Color(0xFF11141B),
+                    ),
                 ),
             )
-            .clickable(onClick = onClick)
-            .padding(13.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .clickable(onClick = onClick),
     ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White.copy(alpha = 0.055f),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 8.dp)
+                .size(112.dp),
+        )
+
         Box(
             modifier = Modifier
-                .size(46.dp)
+                .align(Alignment.TopStart)
+                .padding(14.dp)
+                .size(44.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF5A1024)),
+                .background(Color(0xFF2A303B)),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(25.dp))
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                tint = Color.White,
+                modifier = Modifier.size(25.dp),
+            )
         }
-        Spacer(Modifier.width(10.dp))
-        Column(Modifier.weight(1f)) {
-            Text(title, color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
-            Text(subtitle, color = Color(0xFF90949D), style = MaterialTheme.typography.bodySmall, maxLines = 1)
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(14.dp),
+        ) {
+            Text(
+                text = title,
+                color = Color.White,
+                fontWeight = FontWeight.Black,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                color = Color(0xFF8D929D),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
