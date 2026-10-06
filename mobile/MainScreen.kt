@@ -121,28 +121,22 @@ fun MainScreen(
                     onSettings = onOpenSettings,
                 )
 
-                MobileSection.LIVE -> HomeScreen(
-                    isTelevision = false,
+                MobileSection.LIVE -> LuaLiveScreen(
                     hasSources = hasSources,
                     isSyncing = isSyncing,
                     onPlayChannel = onPlayChannel,
                     onAddSource = onAddSource,
                     onRefresh = onRefresh,
-                    onPlayCatchup = onPlayCatchup,
                 )
 
-                MobileSection.MOVIES -> MoviesScreen(
+                MobileSection.MOVIES -> LuaMoviesScreen(
                     onOpenMovie = onOpenMovie,
-                    onResume = onResume,
-                    onOpenSearch = onOpenSearch,
                     hasSources = hasSources,
                     isSyncing = isSyncing,
                 )
 
-                MobileSection.SERIES -> SeriesScreen(
+                MobileSection.SERIES -> LuaSeriesScreen(
                     onOpenSeries = onOpenSeries,
-                    onResume = onResume,
-                    onOpenSearch = onOpenSearch,
                     hasSources = hasSources,
                     isSyncing = isSyncing,
                 )
